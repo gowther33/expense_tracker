@@ -3,7 +3,7 @@
 {% block title_main %}Expenses{% endblock %}
 {% block body_main %}
 <link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
-    {% include "partials/_sidebar_main.html" %}
+    {% include "partials/_sidebar_main_user.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
@@ -13,12 +13,12 @@
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
             <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
               <li class="breadcrumb-item">
-                <a href="{% url 'dashboard' %}">
+                <a href="{% url 'user_dashboard' %}">
                   <i class="fas fa-home"></i>
                 </a>
               </li>
               <li class="breadcrumb-item">
-                <a href="{% url 'expense' %}">Expense</a>
+                <a href="{% url 'expense_user' %}">Expense</a>
               </li>
               <li class="breadcrumb-item active" aria-current="page">View</li>
             </ol>
@@ -37,33 +37,37 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2 text-right ml-3 mr--3">
-          <a href="{% url 'import_expense' %}" class="btn btn btn-neutral">Import</a> 
-        </div>
+
         <div class="col-md-2 text-right ml--4">
-          <a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a>
+          <a href="{% url 'add_expense_user' %}" class="btn btn btn-neutral">Create New</a>
         </div>
       </div>
       <hr class="mt--2"/>
       <div class="row align-items-center py-4">
         <div class="col mt--5 ml-5">
-          <form method="GET" class="form-inline ml-5" action="{% url 'expense' %}">
+          <form method="GET" class="form-inline ml-5" action="{% url 'expense_user' %}" style="visibility: hidden;">
             <div class="form-group">
-              <span class="text-white ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span>
+              <span class="text-white ml-5">From: 
+                <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
+              </span>
             </div>
             <div class="form-group">
-              <span class="text-white ml-5">To: <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" /></span>
+              <span class="text-white ml-5">To: 
+                <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" />
+              </span>
             </div>
             <div class="ml-5">
               <span class="ml-5">
                 <button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button>
-              </span></div><button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
-            </form>
-          </div>
+              </span>
+            </div>
+            <button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
+          </form>
         </div>
-        <hr class="mt--2"/>
       </div>
+      <hr class="mt--2"/>
     </div>
+  </div>
     </div>
     <div class="container-fluid mt--6">
       <div class="row">
@@ -81,24 +85,19 @@
                             <th style="font-size: small;">
                               <span class="row">Amount ({{currency}}) 
                                 <span class="col">
-                                  <!-- <div class="mb-1 arrow-up" id="amount_up"></div>
-                                  <div class="arrow-down" id="amount_down"></div> -->
+
                                 </span> 
                               </span>
                             </th>
                             <th style="font-size: small;">Category</th>
-                            <th style="font-size: small;">Description </th>
-                            
+                            <th style="font-size: small;">Description</th>
                             <!-- <th style="font-size: small;">
-                              <span class="row ml-1"> Date 
-                                <span class="col">
+                              <span class="row ml-1"> Date <span class="col">
 
-                                </span> 
-                              </span>
+                              </span> 
+                            </span>
                             </th> -->
-
                             <th style="font-size: small;">Date/Time </th>
-                            <th style="font-size: small;">Action</th>
                           </tr>
                         </thead>
                         <tbody id="table-body-data" >{% for expense in page_expenses %}
@@ -106,11 +105,8 @@
                             <td>{{expense.amount}}</td>
                             <td>{{expense.category.name | truncatechars:20 }}</td>
                             <td>{{expense.description | truncatechars:30 }}</td>
-                            <!-- <td>{{expense.date}}</td> -->
                             <td>{{expense.created_at}}</td>
-                            <td>
-                              <a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a>
-                            </td>
+
                           </tr>{% endfor %}
                           <!-- Added -->
                           <td>{{page_total}}</td> 
@@ -126,10 +122,7 @@
           </div>
           <div class="pagination-container">
             <div class="row">
-              <div class="col-md-6">
-                <p></p>
-                <span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span>
-              </div>
+              <div class="col-md-6"><p></p><span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span></div>
               <div class="col-md-6">
                 <ul class="pagination align-right float-right mr-auto">              
                   {% if page_expenses.has_previous %}
@@ -169,4 +162,5 @@
     <input hidden name="date_sort" value="1"></input>
   </form>
   <script src="{% static 'js/sorting.js' %}"></script>
+  <script src="{% static 'js/dateFilter.js' %}"></script>
 {% endblock %}

@@ -16,8 +16,16 @@ import datetime
 from .utils import expense_send_success_mail,expense_send_error_mail
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
-from datetime import datetime as datetime_custom
+from datetime import datetime as datetime_custom, timedelta
 from django.db.models import Q
+
+
+# Sum all expenses in the page
+def expense_sum(expenses):
+    page_total = 0
+    for expense in expenses:
+        page_total += expense.amount
+    return page_total
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -27,21 +35,26 @@ def expense_page(request):
     date_from_html = ''
     date_to_html = ''
 
-    expenses =  Expense.objects.filter(
-        user = request.user
-    ).order_by('-date')
+  
+    expenses = Expense.objects.all().order_by('-date')
 
     try:
 
         if 'date_from' in request.GET and request.GET['date_from'] != '':
             date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+            
             filter_context['date_from'] = request.GET['date_from']
+            
+
             date_from_html = request.GET['date_from']
 
             if 'date_to' in request.GET and request.GET['date_to'] != '':
 
                 date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+
                 filter_context['date_to'] = request.GET['date_to']
+                
+
                 date_to_html = request.GET['date_to']
                 expenses = expenses.filter(
                     Q(date__gte = date_from )
@@ -68,29 +81,106 @@ def expense_page(request):
         return redirect('expense')
     
     base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
-    paginator = Paginator(expenses,5)
+    paginator = Paginator(expenses,10)
     page_number = request.GET.get('page')
     page_expenses = Paginator.get_page(paginator,page_number)
-
-    if UserProfile.objects.filter(user = request.user).exists():
-        currency = UserProfile.objects.get(user = request.user).currency
-    else:
-        currency = 'INR - Indian Rupee'
+    page_total = expense_sum(page_expenses) # Sum total
+    currency = 'PKR - Pakitani Rupee'
 
     return render(request,'expense_app/expense.html',{
         'currency':currency,
         'page_expenses':page_expenses,
         'expenses':expenses,
         'filter_context':filter_context,
-        'base_url':base_url
+        'base_url':base_url,
+        'page_total':page_total
     })
 
 @login_required(login_url='login')
+def expense_page_user(request):
+
+    filter_context = {}
+    base_url = f''
+    date_from_html = ''
+    date_to_html = ''
+    # Added
+    today = datetime.datetime.now()
+    delta = today - timedelta(days=14)
+    today = today.strftime("%Y-%m-%d")
+    delta = delta.strftime("%Y-%m-%d") 
+
+    expenses = Expense.objects.all().order_by('-date')
+    try:
+
+        if 'date_from' in request.GET and request.GET['date_from'] != '':
+            date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_from']
+
+            date_from_html = request.GET['date_from']
+
+            if 'date_to' in request.GET and request.GET['date_to'] != '':
+
+                date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+                filter_context['date_to'] = request.GET['date_to']
+
+                date_to_html = request.GET['date_to']
+                expenses = expenses.filter(
+                    Q(date__gte = date_from )
+                    &
+                    Q(date__lte = date_to)
+                ).order_by('-date')
+
+            else:
+                expenses = expenses.filter(
+                    date__gte = date_from
+                ).order_by('-date')
+
+        elif 'date_to' in request.GET and request.GET['date_to'] != '':
+
+            date_to_html = request.GET['date_to']
+            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_to']
+
+            expenses = expenses.filter(
+                date__lte = date_to
+            ).order_by('-date')
+        else:
+            date_from = delta # from
+            date_to = today # today
+            expenses = expenses.filter(
+                Q(date__gte = date_from )
+                &
+                Q(date__lte = date_to)
+            ).order_by('-date')
+    
+    except:
+        messages.error(request,'Something went wrong')
+        return redirect('expense')
+    
+    base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
+    paginator = Paginator(expenses,10)
+    page_number = request.GET.get('page')
+    page_expenses = Paginator.get_page(paginator,page_number)
+    page_total = expense_sum(page_expenses) # Sum total
+    currency = 'PKR - Pakitani Rupee'
+
+
+    return render(request,'expense_app/expense_user.html',{
+        'currency':currency,
+        'page_expenses':page_expenses,
+        'expenses':expenses,
+        'filter_context':filter_context,
+        'base_url':base_url,
+        'page_total':page_total
+    })
+
+# For Admin
+@login_required(login_url='login')
 def add_expense(request):
     
-    if ExpenseCategory.objects.filter(user=request.user).exists():
+    if ExpenseCategory.objects.all().exists():
         
-        categories = ExpenseCategory.objects.filter(user=request.user)
+        categories = ExpenseCategory.objects.all()
 
         context = {
             'categories' : categories,
@@ -126,9 +216,8 @@ def add_expense(request):
             if date == '':
                 date = localtime()
 
-            category_obj = ExpenseCategory.objects.get(user=request.user,name =category)
+            category_obj = ExpenseCategory.objects.get(name =category)
             Expense.objects.create(
-                user=request.user,
                 amount=amount,
                 date=date,
                 description=description,
@@ -141,182 +230,302 @@ def add_expense(request):
         messages.error(request,'Please add a category first.')
         return redirect('add_expense_category')
 
+
+# For Expense Memo
+# Added
+@login_required(login_url='login')
+def expense_memo(request):
+    
+    if ExpenseCategory.objects.all().exists():
+        
+        categories = ExpenseCategory.objects.all()
+
+        context = {
+            'categories' : categories,
+            'values':request.POST
+        }
+
+        if request.method == 'GET':
+            return render(request,'expense_app/expense_memo.html',context)
+
+        if request.method == 'POST':
+            amount = request.POST.get('amount','')
+            description = request.POST.get('description','')
+            category = request.POST.get('category','')
+            date = request.POST.get('expense_date','')
+
+            if amount== '':
+                messages.error(request,'Amount cannot be empty')
+                return render(request,'expense_app/expense_memo.html',context)
+            
+            amount = float(amount)
+            if amount <= 0:
+                messages.error(request,'Amount should be greater than zero')
+                return render(request,'expense_app/expense_memo.html',context)
+
+            if description == '':
+                messages.error(request,'Description cannot be empty')
+                return render(request,'expense_app/expense_memo.html',context)
+
+            if category == '':
+                messages.error(request,'ExpenseCategory cannot be empty')
+                return render(request,'expense_app/expense_memo.html',context)
+
+            if date == '':
+                date = localtime()
+
+            category_obj = ExpenseCategory.objects.get(name =category)
+            Expense.objects.create(
+                amount=amount,
+                date=date,
+                description=description,
+                category=category_obj
+            ).save()
+
+            messages.success(request,'Expense Saved Successfully')
+            return redirect('expense_memo')
+    else:
+        messages.error(request,'Please add a category first.')
+        return redirect('add_expense_category')
+
+
+
+
+
+# For staff users
+@login_required(login_url='login')
+def add_expense_user(request):
+    
+    if ExpenseCategory.objects.all().exists():
+        
+        categories = ExpenseCategory.objects.all()
+
+        context = {
+            'categories' : categories,
+            'values':request.POST
+        }
+
+        if request.method == 'GET':
+            return render(request,'expense_app/add_expense_user.html',context)
+
+        if request.method == 'POST':
+            amount = request.POST.get('amount','')
+            description = request.POST.get('description','')
+            category = request.POST.get('category','')
+            date = request.POST.get('expense_date','')
+
+            if amount== '':
+                messages.error(request,'Amount cannot be empty')
+                return render(request,'expense_app/add_expense_user.html',context)
+            
+            amount = float(amount)
+            if amount <= 0:
+                messages.error(request,'Amount should be greater than zero')
+                return render(request,'expense_app/add_expense_user.html',context)
+
+            if description == '':
+                messages.error(request,'Description cannot be empty')
+                return render(request,'expense_app/add_expense_user.html',context)
+
+            if category == '':
+                messages.error(request,'ExpenseCategory cannot be empty')
+                return render(request,'expense_app/add_expense_user.html',context)
+
+            if date == '':
+                date = localtime()
+
+            category_obj = ExpenseCategory.objects.get(name =category)
+            Expense.objects.create(
+                amount=amount,
+                date=date,
+                description=description,
+                category=category_obj
+            ).save()
+
+            messages.success(request,'Expense Saved Successfully')
+            return redirect('expense_user')
+    else:
+        messages.error(request,'Please ask the Admin to add expense categories first.')
+        return redirect('expense_user')
+
+
 @login_required(login_url='login')
 def add_expense_category(request):
-    
-    categories = ExpenseCategory.objects.filter(user=request.user)
+    if request.user.is_superuser:
+        categories = ExpenseCategory.objects.all()
 
-    context = {
-        'categories' : categories,
-        'values':request.POST,
-        'create':True
-    }
-
-    if request.method == 'GET': 
-        return render(request,'expense_app/expense_category_import.html',context)
-
-    if request.method == 'POST':
-        name = request.POST.get('name','')
-
-        if name == '':
-            messages.error(request,'Expense Category cannot be empty')
-            return render(request,'expense_app/expense_category_import.html',context)
-        
-        name = name.lower().capitalize()
-        if ExpenseCategory.objects.filter(user=request.user,name = name).exists():
-            messages.error(request,f'Expense Category ({name}) already exists.')
-            return render(request,'expense_app/expense_category_import.html',context)
-        
-        ExpenseCategory.objects.create(user=request.user,name = name).save()
-
-        messages.success(request,'Expense Category added')
-        return render(request,'expense_app/expense_category_import.html',{
+        context = {
             'categories' : categories,
+            'values':request.POST,
             'create':True
-        })
+        }
+
+        if request.method == 'GET': 
+            return render(request,'expense_app/expense_category_import.html',context)
+
+        if request.method == 'POST':
+            name = request.POST.get('name','')
+
+            if name == '':
+                messages.error(request,'Expense Category cannot be empty')
+                return render(request,'expense_app/expense_category_import.html',context)
+            
+            name = name.lower().capitalize()
+            if ExpenseCategory.objects.filter(name = name).exists():
+                messages.error(request,f'Expense Category ({name}) already exists.')
+                return render(request,'expense_app/expense_category_import.html',context)
+            
+            ExpenseCategory.objects.create(name = name).save()
+
+            messages.success(request,'Expense Category added')
+            return render(request,'expense_app/expense_category_import.html',{
+                'categories' : categories,
+                'create':True
+            })
+    else:
+        messages.error(request,'Only Admin can add expense category.')
+        return redirect('expense_user')
 
 @login_required(login_url='login')
 def edit_expense_category(request,id):
+    if request.user.is_superuser:
+        if ExpenseCategory.objects.filter(pk=id).exists():
+            category = ExpenseCategory.objects.get(pk=id)
+        else:
+            messages.error(request,'Something Went Wrong')
+            return redirect('add_expense_category')
 
-    if ExpenseCategory.objects.filter(user=request.user,pk=id).exists():
-        category = ExpenseCategory.objects.get(user=request.user,pk=id)
-    else:
-        messages.error(request,'Something Went Wrong')
-        return redirect('add_expense_category')
-
-    if category.user != request.user:
-        messages.error(request,'Something Went Wrong')
-        return redirect('add_expense_category')
-
-    context = {
-        'value':category.name,
-        'update':True,
-        'id':category.id
-    }
-
-    if request.method == 'GET': 
-        return render(request,'expense_app/expense_category_import.html',context)
-
-    if request.method == 'POST':
-        name = request.POST.get('name','')
+        if category.user != request.user:
+            messages.error(request,'Something Went Wrong')
+            return redirect('add_expense_category')
 
         context = {
-            'value':name,
+            'value':category.name,
             'update':True,
             'id':category.id
         }
 
-        if name == '':
-            messages.error(request,'Expense Category cannot be empty')
+        if request.method == 'GET': 
             return render(request,'expense_app/expense_category_import.html',context)
-        
-        name = name.lower().capitalize()
-        if ExpenseCategory.objects.filter(user=request.user,name = name).exists():
-            messages.error(request,f'Expense Category ({name}) already exists.')
-            return render(request,'expense_app/expense_category_import.html',context)
-        
-        category.name = name
-        category.save()
 
-        messages.success(request,'Expense Category Updated')
-        return redirect('add_expense_category')
+        if request.method == 'POST':
+            name = request.POST.get('name','')
 
+            context = {
+                'value':name,
+                'update':True,
+                'id':category.id
+            }
+
+            if name == '':
+                messages.error(request,'Expense Category cannot be empty')
+                return render(request,'expense_app/expense_category_import.html',context)
+            
+            name = name.lower().capitalize()
+            if ExpenseCategory.objects.filter(name = name).exists():
+                messages.error(request,f'Expense Category ({name}) already exists.')
+                return render(request,'expense_app/expense_category_import.html',context)
+            
+            category.name = name
+            category.save()
+
+            messages.success(request,'Expense Category Updated')
+            return redirect('add_expense_category')
+    else:
+        messages.error(request,'Only Admin can edit expense category.')
+        return redirect('expense_user')
+    
 @login_required(login_url='login')
 def delete_expense_category(request,id):
-
-    if ExpenseCategory.objects.filter(id=id,user=request.user).exists():
-        category = ExpenseCategory.objects.get(id=id,user=request.user)
-        
-        if category.user != request.user:
-            messages.error(request,'You cannot delete this catgeory.')
-            return redirect('add_expense_category')
-        
-        else:
+    if request.user.is_superuser:
+        if ExpenseCategory.objects.filter(id=id).exists():
+            category = ExpenseCategory.objects.get(id=id)
             category.delete()
             messages.success(request,'Deleted category')
             return redirect('add_expense_category')
-    
-    messages.error(request,'Please try again')
-    return redirect('add_expense_category')
+        messages.error(request,'Expense category does not exists.')
+        return redirect('add_expense_category')
+    else:
+        messages.error(request,'Only Admin can delete expense category.')
+        return redirect('expense_user')
+
 
 @login_required(login_url='login')
 def edit_expense(request,id):
-    
-    if Expense.objects.filter(id=id,user=request.user).exists():
-        expense = Expense.objects.get(id=id,user=request.user)
-    
+    if request.user.is_superuser:
+        if Expense.objects.filter(id=id).exists():
+            expense = Expense.objects.get(id=id)
+        
+        else:
+            messages.error(request,'Expense does not exists')
+            return redirect('expense')
+        
+        categories = ExpenseCategory.objects.all().exclude(id=expense.category.id)
+
+        context = {
+            'expense':expense,
+            'values': expense,
+            'categories':categories
+        }
+        
+        if request.method == 'GET':
+            return render(request,'expense_app/edit_expense.html',context)
+
+        if request.method == 'POST':
+            amount = request.POST.get('amount','')
+            description = request.POST.get('description','')
+            category = request.POST.get('category','')
+            date = request.POST.get('expense_date','')
+            
+            if amount== '':
+                messages.error(request,'Amount cannot be empty')
+                return render(request,'expense_app/edit_expense.html',context)
+            
+            amount = float(amount)
+            if amount <= 0:
+                messages.error(request,'Amount should be greater than zero')
+                return render(request,'expense_app/edit_expense.html',context)
+            
+            if description == '':
+                messages.error(request,'Description cannot be empty')
+                return render(request,'expense_app/edit_expense.html',context)
+            
+            if category == '':
+                messages.error(request,'ExpenseCategory cannot be empty')
+                return render(request,'expense_app/edit_expense.html',context)
+            
+            if date == '':
+                date = localtime()
+            
+            category_obj = ExpenseCategory.objects.get(name =category)
+            expense.amount = amount
+            expense.date = date
+            expense.category = category_obj
+            expense.description = description
+            expense.save() 
+            
+            messages.success(request,'Expense Updated Successfully')
+            return redirect('expense')
     else:
-        messages.error(request,'Something went Wrong. Please Try Again')
-        return redirect('expense')
-    
-    if expense.user != request.user:
-        messages.error(request,'Something Went Wrong')
-        return redirect('expense')
-    
-    categories = ExpenseCategory.objects.filter(user=request.user).exclude(id=expense.category.id)
+        messages.error(request,'Only Admin can edit expense.')
+        return redirect('expense_user')
 
-    context = {
-        'expense':expense,
-        'values': expense,
-        'categories':categories
-    }
-    
-    if request.method == 'GET':
-        return render(request,'expense_app/edit_expense.html',context)
-
-    if request.method == 'POST':
-        amount = request.POST.get('amount','')
-        description = request.POST.get('description','')
-        category = request.POST.get('category','')
-        date = request.POST.get('expense_date','')
-        
-        if amount== '':
-            messages.error(request,'Amount cannot be empty')
-            return render(request,'expense_app/edit_expense.html',context)
-        
-        amount = float(amount)
-        if amount <= 0:
-            messages.error(request,'Amount should be greater than zero')
-            return render(request,'expense_app/edit_expense.html',context)
-        
-        if description == '':
-            messages.error(request,'Description cannot be empty')
-            return render(request,'expense_app/edit_expense.html',context)
-        
-        if category == '':
-            messages.error(request,'ExpenseCategory cannot be empty')
-            return render(request,'expense_app/edit_expense.html',context)
-        
-        if date == '':
-            date = localtime()
-        
-        category_obj = ExpenseCategory.objects.get(user=request.user,name =category)
-        expense.amount = amount
-        expense.date = date
-        expense.category = category_obj
-        expense.description = description
-        expense.save() 
-        
-        messages.success(request,'Expense Updated Successfully')
-        return redirect('expense')
 
 @login_required(login_url='login')
 def delete_expense(request,id):
-    
-    if Expense.objects.filter(id=id,user=request.user).exists():
-        expense = Expense.objects.get(id=id,user=request.user)
-        
-        if expense.user != request.user:
-            messages.error(request,'Something Went Wrong')
-            return redirect('expense')
-        
-        else:
+    if request.user.is_superuser:
+        if Expense.objects.filter(id=id).exists():
+            expense = Expense.objects.get(id=id)            
+
             expense.delete()
             messages.success(request,'Expense Deleted Successfully')
             return redirect('expense')
+        else:
+            messages.error(request,'Expense does not exists')
+            return redirect('expense')
     else:
-        messages.error(request,'Something went Wrong. Please Try Again')
-        return redirect('expense')
+        messages.error(request,'Only Admin can delete expense.')
+        return redirect('expense_user')
 
 @login_required(login_url='login')
 def download_as_excel(request,filter_by):
@@ -341,7 +550,7 @@ def download_as_excel(request,filter_by):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
     fontStyle = xlwt.XFStyle()
 
-    expenses = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    expenses = queryset_filter(filter_by).order_by('date')
     rows = expenses.values_list('date','category__name','description','amount')
     for row in rows:
         row_number += 1
@@ -363,7 +572,7 @@ def download_as_csv(request,filter_by):
     writer = csv.writer(response)
     writer.writerow(['Date','Category','Description','Amount'])
     
-    expenses = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    expenses = queryset_filter(filter_by).order_by('date')
     for expense in expenses:
         writer.writerow([expense.date,expense.category.name,expense.description,expense.amount])
     
@@ -404,10 +613,10 @@ def upload_csv(request):
 
             csv.columns = [c.lower() for c in csv.columns]
 
-            if ExpenseCategory.objects.filter(user = request.user, name='Loaded From Csv'):
-                csv_expense_category = ExpenseCategory.objects.get(user = request.user, name='Loaded From Csv')
+            if ExpenseCategory.objects.filter(name='Loaded From Csv'):
+                csv_expense_category = ExpenseCategory.objects.get(name='Loaded From Csv')
             else:
-                csv_expense_category = ExpenseCategory.objects.create(user = request.user, name='Loaded From Csv')
+                csv_expense_category = ExpenseCategory.objects.create(name='Loaded From Csv')
                 csv_expense_category.save()
 
             expense_count = 0
@@ -423,10 +632,10 @@ def upload_csv(request):
 
                 if not pd.isna(row['category']):
                     name = row['category'].strip().lower().capitalize()
-                    if ExpenseCategory.objects.filter(user = request.user, name = name).exists():
-                        category = ExpenseCategory.objects.get(user = request.user, name = name)
+                    if ExpenseCategory.objects.filter(name = name).exists():
+                        category = ExpenseCategory.objects.get(name = name)
                     else:
-                        category = ExpenseCategory.objects.create(user = request.user, name = name)
+                        category = ExpenseCategory.objects.create(name = name)
                         category.save()
                 else:
                     category = csv_expense_category
@@ -438,7 +647,6 @@ def upload_csv(request):
                 
                 if not pd.isna(row['amount']):
                     Expense.objects.create(
-                        user = request.user,
                         amount = float(row['amount']),
                         date = date,
                         description = description,
@@ -497,10 +705,10 @@ def upload_excel(request):
                 messages.error(request,'Please upload a excel file with less than 10 rows.')
                 return redirect('import_expense')
 
-            if ExpenseCategory.objects.filter(user = request.user, name='Loaded From Excel'):
-                excel_expense_category = ExpenseCategory.objects.get(user = request.user, name='Loaded From Excel')
+            if ExpenseCategory.objects.filter(name='Loaded From Excel'):
+                excel_expense_category = ExpenseCategory.objects.get(name='Loaded From Excel')
             else:
-                excel_expense_category = ExpenseCategory.objects.create(user = request.user, name='Loaded From Excel')
+                excel_expense_category = ExpenseCategory.objects.create(name='Loaded From Excel')
                 excel_expense_category.save()
 
             headers = expense_excel_data.pop(0)
@@ -531,10 +739,10 @@ def upload_excel(request):
 
                 if not row[1] == '':
                     name = row[1].strip().lower().capitalize()
-                    if ExpenseCategory.objects.filter(user = request.user, name = name).exists():
-                        category = ExpenseCategory.objects.get(user = request.user, name = name)
+                    if ExpenseCategory.objects.filter(name = name).exists():
+                        category = ExpenseCategory.objects.get(name = name)
                     else:
-                        category = ExpenseCategory.objects.create(user = request.user, name = name)
+                        category = ExpenseCategory.objects.create(name = name)
                         category.save()
                 else:
                     category = excel_expense_category
@@ -546,7 +754,6 @@ def upload_excel(request):
                 
                 if not row[3] == '':
                     Expense.objects.create(
-                        user = request.user,
                         amount = float(row[3]),
                         date = date,
                         description = description,
@@ -568,7 +775,7 @@ def upload_excel(request):
 @login_required(login_url='login')
 def expense_page_sort(request):
 
-    expenses =  Expense.objects.filter(user=request.user)
+    expenses =  Expense.objects.all()
     base_url = ''
 
     try:
@@ -594,11 +801,7 @@ def expense_page_sort(request):
     paginator = Paginator(expenses,5)
     page_number = request.GET.get('page')
     page_expenses = Paginator.get_page(paginator,page_number)
-
-    if UserProfile.objects.filter(user = request.user).exists():
-        currency = UserProfile.objects.get(user = request.user).currency
-    else:
-        currency = 'INR - Indian Rupee'
+    currency = 'PKR - Pakistani Rupee'
 
     return render(request,'expense_app/expense.html',{
         'currency':currency,

@@ -36,9 +36,9 @@ class Registration(View):
         if not User.objects.filter(username=username).exists():
             if  not User.objects.filter(email=email).exists():
                 if password != password2:
-                    messages.error(request,"Passwords don't match")
+                    messages.error(request,"Passwords do not match")
                     return render(request,'auth_app/register.html',context=context)
-                if len(password) < 6:
+                if len(password) < 8:
                     messages.error(request,'Password is too short')
                     return render(request,'auth_app/register.html',context=context)
                 
@@ -85,10 +85,14 @@ class Login(View):
                 if not user.is_active:
                     messages.error(request,'Please Activate Account.')
                     return render(request,'auth_app/login.html')
-                elif user.is_active:
+                elif user.is_active and user.is_superuser:
                     auth.login(request,user)
                     messages.success(request,"Welcome, "+ user.username + ". You are now logged in.")
                     return redirect('dashboard')
+                elif user.is_active:
+                    auth.login(request,user)
+                    messages.success(request,"Welcome, "+ user.username + ". You are now logged in.")
+                    return redirect('user_dashboard')
             else:
                 messages.error(request,'Invalid credentials')
                 return render(request,'auth_app/login.html',context=context)

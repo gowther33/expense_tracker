@@ -26,7 +26,10 @@ urlpatterns = [
     path('download-data/complete-spreadsheet/excel',views.complete_spreadsheet_excel,name="complete_spreadsheet_excel"),
     path('download-data/complete-spreadsheet/csv',views.complete_spreadsheet_csv,name="complete_spreadsheet_csv"),
     path('download-data/complete-spreadsheet/pdf',views.complete_spreadsheet_pdf,name="complete_spreadsheet_pdf"),
+
     path('dashboard/',views.dashboard,name="dashboard"),
+    path('user_dashboard/',views._dashboard,name="user_dashboard"),
+
     path('auth/',include('auth_app.urls')),
     path('expense/',include('expense_app.urls')),
     path('income/',include('income_app.urls')),

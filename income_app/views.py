@@ -16,8 +16,17 @@ import datetime
 from .utils import income_send_success_mail,income_send_error_mail
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
-from datetime import datetime as datetime_custom
+from datetime import datetime as datetime_custom, timedelta
 from django.db.models import Q
+
+
+
+# Sum all expenses in the page
+def income_sum(incomes):
+    page_total = 0
+    for expense in incomes:
+        page_total += expense.amount
+    return page_total
 
 @login_required(login_url='login')
 def income_page(request):
@@ -27,9 +36,7 @@ def income_page(request):
     date_from_html = ''
     date_to_html = ''
 
-    incomes =  Income.objects.filter(
-        user=request.user
-    ).order_by('-date')
+    incomes = Income.objects.all().order_by('-date')
 
     try:
 
@@ -68,29 +75,106 @@ def income_page(request):
         return redirect('income')
     
     base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
-    paginator = Paginator(incomes,5)
+    paginator = Paginator(incomes,10)
     page_number = request.GET.get('page')
     page_incomes = Paginator.get_page(paginator,page_number)
+    page_total = income_sum(page_incomes) # Sum total
+    currency = 'PKR - Pakitani Rupee'
 
-    if UserProfile.objects.filter(user = request.user).exists():
-        currency = UserProfile.objects.get(user = request.user).currency
-    else:
-        currency = 'INR - Indian Rupee'
     
     return render(request,'income_app/income.html',{
         'currency':currency,
         'page_incomes':page_incomes,
         'incomes':incomes,
         'filter_context':filter_context,
-        'base_url':base_url
+        'base_url':base_url,
+        'page_total':page_total
+    })
+@login_required(login_url='login')
+def income_page_user(request):
+
+    filter_context = {}
+    base_url = f''
+    date_from_html = ''
+    date_to_html = ''
+    # Added
+    today = datetime.datetime.now()
+    delta = today - timedelta(days=14)
+    today = today.strftime("%Y-%m-%d")
+    delta = delta.strftime("%Y-%m-%d") 
+
+    incomes = Income.objects.all().order_by('-date')
+
+    try:
+
+        if 'date_from' in request.GET and request.GET['date_from'] != '':
+            date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_from']
+            date_from_html = request.GET['date_from']
+
+            if 'date_to' in request.GET and request.GET['date_to'] != '':
+
+                date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+                filter_context['date_to'] = request.GET['date_to']
+                date_to_html = request.GET['date_to']
+                incomes = incomes.filter(
+                    Q(date__gte = date_from )
+                    &
+                    Q(date__lte = date_to)
+                ).order_by('-date')
+
+            else:
+                incomes = incomes.filter(
+                    date__gte = date_from
+                ).order_by('-date')
+
+        elif 'date_to' in request.GET and request.GET['date_to'] != '':
+
+            date_to_html = request.GET['date_to']
+            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_to']
+            incomes = incomes.filter(
+                date__lte = date_to
+            ).order_by('-date')
+        else:
+            date_from = delta # from
+            date_to = today # today
+            incomes = incomes.filter(
+                Q(date__gte = date_from )
+                &
+                Q(date__lte = date_to)
+            ).order_by('-date')
+        
+    except:
+        messages.error(request,'Something went wrong')
+        return redirect('income_user')
+    
+    base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
+    paginator = Paginator(incomes,10)
+    page_number = request.GET.get('page')
+    page_incomes = Paginator.get_page(paginator,page_number)
+    page_total = income_sum(page_incomes) # Sum total
+    currency = 'PKR - Pakitani Rupee'
+
+    
+    return render(request,'income_app/income_user.html',{
+        'currency':currency,
+        'page_incomes':page_incomes,
+        'incomes':incomes,
+        'filter_context':filter_context,
+        'base_url':base_url,
+        'page_total':page_total
     })
 
+# For Admin
 @login_required(login_url='login')
 def add_income(request):
 
-    if IncomeSource.objects.filter(user=request.user).exists():
-
-        sources = IncomeSource.objects.filter(user=request.user)
+    # if IncomeSource.objects.filter(user=request.user).exists():
+    if IncomeSource.objects.all().exists():
+        
+        # sources = IncomeSource.objects.filter(user=request.user)
+        sources = IncomeSource.objects.all()
 
         context = {
             'sources' : sources,
@@ -126,9 +210,9 @@ def add_income(request):
             if date == '':
                 date = localtime()
             
-            source_obj = IncomeSource.objects.get(user=request.user,source =source)
+            # source_obj = IncomeSource.objects.get(user=request.user,source =source)
+            source_obj = IncomeSource.objects.get(source =source)
             Income.objects.create(
-                user=request.user,
                 amount=amount,
                 date=date,
                 description=description,
@@ -141,182 +225,242 @@ def add_income(request):
         messages.error(request,'Please add a income source first.')
         return redirect('add_income_source')
 
+# For staff users
+@login_required(login_url='login')
+def add_income_user(request):
+
+    # if IncomeSource.objects.filter(user=request.user).exists():
+    if IncomeSource.objects.all().exists():
+        
+        # sources = IncomeSource.objects.filter(user=request.user)
+        sources = IncomeSource.objects.all()
+
+        context = {
+            'sources' : sources,
+            'values':request.POST
+    	}
+
+        if request.method == 'GET':
+            return render(request,'income_app/add_income_user.html',context)
+        
+        if request.method == 'POST':
+            amount = request.POST.get('amount','')
+            description = request.POST.get('description','')
+            source = request.POST.get('source','')
+            date = request.POST.get('income_date','')
+            
+            if amount == '':
+                messages.error(request,'Amount cannot be empty')
+                return render(request,'income_app/add_income_user.html',context)
+            
+            amount = float(amount)
+            if amount<=0 :
+                messages.error(request,'Amount should be greater than zero')
+                return render(request,'income_app/add_income_user.html',context)
+            
+            if description == '':
+                messages.error(request,'Description cannot be empty')
+                return render(request,'income_app/add_income_user.html',context)
+            
+            if source == '':
+                messages.error(request,'IncomeSource cannot be empty')
+                return render(request,'income_app/add_income_user.html',context)
+            
+            if date == '':
+                date = localtime()
+            
+            source_obj = IncomeSource.objects.get(source =source)
+            Income.objects.create(
+                amount=amount,
+                date=date,
+                description=description,
+                source=source_obj
+            ).save()
+
+            messages.success(request,'Income Saved Successfully')
+            return redirect('income_user')
+    else:
+        messages.error(request,'Please ask the Admin to add income sources first.')
+        return redirect('income_user')
+
+
 @login_required(login_url='login')
 def add_income_source(request):
-
-    sources = IncomeSource.objects.filter(user=request.user)
-    
-    context = {
-        'sources' : sources,
-        'values':request.POST,
-        'create':True
-    }
-
-    if request.method == 'GET': 
-        return render(request,'income_app/income_source_import.html',context)
-    
-    if request.method == 'POST':
-        source = request.POST.get('source','')
+    if request.user.is_superuser:
+        # sources = IncomeSource.objects.filter(user=request.user)
+        sources = IncomeSource.objects.all()
         
-        if source == '':
-            messages.error(request,'IncomeSource cannot be empty')
-            return render(request,'income_app/income_source_import.html',context)
-        
-        source = source.lower().capitalize()
-        if IncomeSource.objects.filter(user=request.user,source = source).exists():
-            messages.error(request,f'Income Source ({source}) already exists.')
-            return render(request,'income_app/income_source_import.html',context)
-        
-        IncomeSource.objects.create(user=request.user,source = source).save()
-        
-        messages.success(request,'IncomeSource added')
-        return render(request,'income_app/income_source_import.html',{
+        context = {
             'sources' : sources,
+            'values':request.POST,
             'create':True
-        })
+        }
+
+        if request.method == 'GET': 
+            return render(request,'income_app/income_source_import.html',context)
+        
+        if request.method == 'POST':
+            source = request.POST.get('source','')
+            
+            if source == '':
+                messages.error(request,'IncomeSource cannot be empty')
+                return render(request,'income_app/income_source_import.html',context)
+            
+            source = source.lower().capitalize()
+            if IncomeSource.objects.filter(source = source).exists():
+                messages.error(request,f'Income Source ({source}) already exists.')
+                return render(request,'income_app/income_source_import.html',context)
+            
+            IncomeSource.objects.create(source = source).save()
+            
+            messages.success(request,'IncomeSource added')
+            return render(request,'income_app/income_source_import.html',{
+                'sources' : sources,
+                'create':True
+            })
+    else:
+        messages.error(request,'Only Admin can add income source.')
+        return redirect('income_user')
 
 @login_required(login_url='login')
 def edit_income_source(request,id):
-
-    if IncomeSource.objects.filter(user=request.user,pk=id).exists():
-        source_obj = IncomeSource.objects.get(user=request.user,pk=id)
-    else:
-        messages.error(request,'Something Went Wrong')
-        return redirect('add_income_source')
-    
-    if source_obj.user != request.user:
-        messages.error(request,'Something Went Wrong')
-        return redirect('add_income_source')
-
-    context = {
-        'value' : source_obj.source,
-        'update':True,
-        'id':source_obj.id
-    }
-
-    if request.method == 'GET': 
-        return render(request,'income_app/income_source_import.html',context)
-    
-    if request.method == 'POST':
-        source = request.POST.get('source','')
+    if request.user.is_superuser:
+        if IncomeSource.objects.filter(pk=id).exists():
+            source_obj = IncomeSource.objects.get(pk=id)
+        else:
+            messages.error(request,'Income source does not exists')
+            return redirect('add_income_source')
         
+        # if source_obj.user != request.user:
+        #     messages.error(request,'Something Went Wrong')
+        #     return redirect('add_income_source')
+
         context = {
-            'value':source,
+            'value' : source_obj.source,
             'update':True,
             'id':source_obj.id
         }
 
-        if source == '':
-            messages.error(request,'IncomeSource cannot be empty')
+        if request.method == 'GET': 
             return render(request,'income_app/income_source_import.html',context)
         
-        source = source.lower().capitalize()
-        if IncomeSource.objects.filter(user=request.user,source = source).exists():
-            messages.error(request,f'Income Source ({source}) already exists.')
-            return render(request,'income_app/income_source_import.html',context)
-        
-        source_obj.source = source
-        source_obj.save()
-        
-        messages.success(request,'Income Source Updated')
-        return redirect('add_income_source')
+        if request.method == 'POST':
+            source = request.POST.get('source','')
+            
+            context = {
+                'value':source,
+                'update':True,
+                'id':source_obj.id
+            }
+
+            if source == '':
+                messages.error(request,'IncomeSource cannot be empty')
+                return render(request,'income_app/income_source_import.html',context)
+            
+            source = source.lower().capitalize()
+            if IncomeSource.objects.filter(source = source).exists():
+                messages.error(request,f'Income Source ({source}) already exists.')
+                return render(request,'income_app/income_source_import.html',context)
+            
+            source_obj.source = source
+            source_obj.save()
+            
+            messages.success(request,'Income Source Updated')
+            return redirect('add_income_source')
+    else:
+        messages.error(request,'Only Admin can edit income sources.')
+        return redirect('income_user')
 
 @login_required(login_url='login')
 def delete_income_source(request,id):
-
-    if IncomeSource.objects.filter(pk=id,user=request.user).exists():
-        income_source = IncomeSource.objects.get(pk=id,user=request.user)
-        
-        if income_source.user != request.user:
-            messages.error(request,'You cannot delete this income source.')
-            return redirect('add_income_source')
-        
-        else:
+    if request.user.is_superuser:
+        if IncomeSource.objects.filter(pk=id).exists():
+            income_source = IncomeSource.objects.get(pk=id)            
             income_source.delete()
             messages.success(request,'Deleted income source')
             return redirect('add_income_source')
-    
-    messages.error(request,'Please try again')
-    return redirect('add_income_source')
+        messages.error(request,'Income source does not exists.')
+        return redirect('add_income_source')
+    else:
+        messages.error(request,'Only Admin can delete income sources.')
+        return redirect('income_user')        
 
 @login_required(login_url='login')
 def edit_income(request,id):
-    
-    if Income.objects.filter(id=id,user=request.user).exists():
-        income = Income.objects.get(id=id,user=request.user)
-    
+    if request.user.is_superuser:
+        if Income.objects.filter(id=id).exists():
+            income = Income.objects.get(id=id)
+        
+        else:
+            messages.error(request,'Something went Wrong. Please Try Again')
+            return redirect('income')
+
+        # sources = IncomeSource.objects.filter(user=request.user).exclude(id=income.source.id)
+        sources = IncomeSource.objects.all().exclude(id=income.source.id)
+
+        context = {
+            'income':income,
+            'values': income,
+            'sources':sources
+        }
+        
+        if request.method == 'GET':
+            return render(request,'income_app/edit_income.html',context)
+
+        if request.method == 'POST':
+            amount = request.POST.get('amount','')
+            description = request.POST.get('description','')
+            source = request.POST.get('source','')
+            date = request.POST.get('income_date','')
+            
+            if amount== '':
+                messages.error(request,'Amount cannot be empty')
+                return render(request,'income_app/edit_income.html',context)
+            
+            amount = float(amount)
+            if amount <= 0:
+                messages.error(request,'Amount should be greater than zero')
+                return render(request,'income_app/edit_income.html',context)
+            
+            if description == '':
+                messages.error(request,'Description cannot be empty')
+                return render(request,'income_app/edit_income.html',context)
+            
+            if source == '':
+                messages.error(request,'Income Source cannot be empty')
+                return render(request,'income_app/edit_income.html',context)
+            
+            if date == '':
+                date = localtime()
+
+            income_obj = IncomeSource.objects.get(source=source)
+            income.amount = amount
+            income.date = date
+            income.source = income_obj
+            income.description = description
+            income.save()
+
+            messages.success(request,'Income Updated Successfully')
+            return redirect('income')
     else:
-        messages.error(request,'Something went Wrong. Please Try Again')
-        return redirect('income')
-    
-    if income.user != request.user:
-        messages.error(request,'Something Went Wrong')
-        return redirect('income')
-
-    sources = IncomeSource.objects.filter(user=request.user).exclude(id=income.source.id)
-
-    context = {
-        'income':income,
-        'values': income,
-        'sources':sources
-    }
-    
-    if request.method == 'GET':
-        return render(request,'income_app/edit_income.html',context)
-
-    if request.method == 'POST':
-        amount = request.POST.get('amount','')
-        description = request.POST.get('description','')
-        source = request.POST.get('source','')
-        date = request.POST.get('income_date','')
-        
-        if amount== '':
-            messages.error(request,'Amount cannot be empty')
-            return render(request,'income_app/edit_income.html',context)
-        
-        amount = float(amount)
-        if amount <= 0:
-            messages.error(request,'Amount should be greater than zero')
-            return render(request,'income_app/edit_income.html',context)
-        
-        if description == '':
-            messages.error(request,'Description cannot be empty')
-            return render(request,'income_app/edit_income.html',context)
-        
-        if source == '':
-            messages.error(request,'Income Source cannot be empty')
-            return render(request,'income_app/edit_income.html',context)
-        
-        if date == '':
-            date = localtime()
-
-        income_obj = IncomeSource.objects.get(user=request.user,source=source)
-        income.amount = amount
-        income.date = date
-        income.source = income_obj
-        income.description = description
-        income.save()
-
-        messages.success(request,'Income Updated Successfully')
-        return redirect('income')
+        messages.error(request,'Only Admin can edit income.')
+        return redirect('income_user') 
 
 @login_required(login_url='login')
 def delete_income(request,id):
+    if request.user.is_superuser:
+        if Income.objects.filter(id=id).exists():
+            income = Income.objects.get(id=id)
 
-    if Income.objects.filter(id=id,user=request.user).exists():
-        income = Income.objects.get(id=id,user=request.user)
-        
-        if income.user != request.user:
-            messages.error(request,'Something Went Wrong')
-            return redirect('income')
-        
-        else:
             income.delete()
             messages.success(request,'Income Deleted Successfully')
             return redirect('income')
+        else:
+            messages.error(request,'Something went Wrong. Please Try Again')
+            return redirect('income')
     else:
-        messages.error(request,'Something went Wrong. Please Try Again')
-        return redirect('income')
+        messages.error(request,'Only Admin can delete income.')
+        return redirect('income_user') 
 
 @login_required(login_url='login')
 def download_as_excel(request,filter_by):
@@ -341,7 +485,7 @@ def download_as_excel(request,filter_by):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
     fontStyle = xlwt.XFStyle()
     
-    incomes = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    incomes = queryset_filter(filter_by).order_by('date')
     rows = incomes.values_list('date','source__source','description','amount')
     for row in rows:
         row_number += 1
@@ -363,7 +507,7 @@ def download_as_csv(request,filter_by):
     writer = csv.writer(response)
     writer.writerow(['Date','Source','Description','Amount'])
     
-    incomes = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    incomes = queryset_filter(filter_by).order_by('date')
     for income in incomes:
         writer.writerow([income.date,income.source.source,income.description,income.amount])
     
@@ -404,10 +548,10 @@ def upload_csv(request):
 
             csv.columns = [c.lower() for c in csv.columns]
 
-            if IncomeSource.objects.filter(user = request.user, source='Loaded From Csv'):
-                csv_income_source = IncomeSource.objects.get(user = request.user, source='Loaded From Csv')
+            if IncomeSource.objects.filter(source='Loaded From Csv'):
+                csv_income_source = IncomeSource.objects.get(source='Loaded From Csv')
             else:
-                csv_income_source = IncomeSource.objects.create(user = request.user, source='Loaded From Csv')
+                csv_income_source = IncomeSource.objects.create(source='Loaded From Csv')
                 csv_income_source.save()
 
             income_count = 0
@@ -423,10 +567,10 @@ def upload_csv(request):
 
                 if not pd.isna(row['source']):
                     source = row['source'].strip().lower().capitalize()
-                    if IncomeSource.objects.filter(user = request.user, source = source).exists():
-                        source = IncomeSource.objects.get(user = request.user, source = source)
+                    if IncomeSource.objects.filter(source = source).exists():
+                        source = IncomeSource.objects.get(source = source)
                     else:
-                        source = IncomeSource.objects.create(user = request.user, source = source)
+                        source = IncomeSource.objects.create(source = source)
                         source.save()
                 else:
                     source = csv_income_source
@@ -438,7 +582,6 @@ def upload_csv(request):
                 
                 if not pd.isna(row['amount']):
                     Income.objects.create(
-                        user = request.user,
                         amount = float(row['amount']),
                         date = date,
                         description = description,
@@ -497,10 +640,10 @@ def upload_excel(request):
                 messages.error(request,'Please upload a excel file with less than 10 rows.')
                 return redirect('import_income')
 
-            if IncomeSource.objects.filter(user = request.user, source='Loaded From Excel'):
-                excel_income_source = IncomeSource.objects.get(user = request.user, source='Loaded From Excel')
+            if IncomeSource.objects.filter(source='Loaded From Excel'):
+                excel_income_source = IncomeSource.objects.get(source='Loaded From Excel')
             else:
-                excel_income_source = IncomeSource.objects.create(user = request.user, source='Loaded From Excel')
+                excel_income_source = IncomeSource.objects.create(source='Loaded From Excel')
                 excel_income_source.save()
 
             headers = income_excel_data.pop(0)
@@ -531,10 +674,10 @@ def upload_excel(request):
 
                 if not row[1] == '':
                     source = row[1].strip().lower().capitalize()
-                    if IncomeSource.objects.filter(user = request.user, source = source).exists():
-                        income_source = IncomeSource.objects.get(user = request.user, source = source)
+                    if IncomeSource.objects.filter(source = source).exists():
+                        income_source = IncomeSource.objects.get(source = source)
                     else:
-                        income_source = IncomeSource.objects.create(user = request.user, source = source)
+                        income_source = IncomeSource.objects.create(source = source)
                         income_source.save()
                 else:
                     income_source = excel_income_source
@@ -546,7 +689,6 @@ def upload_excel(request):
                 
                 if not row[3] == '':
                     Income.objects.create(
-                        user = request.user,
                         amount = float(row[3]),
                         date = date,
                         description = description,
@@ -568,7 +710,7 @@ def upload_excel(request):
 @login_required(login_url='login')
 def income_page_sort(request):
 
-    incomes =  Income.objects.filter(user=request.user)
+    incomes =  Income.objects.all()
     base_url = ''
 
     try:
@@ -594,11 +736,8 @@ def income_page_sort(request):
     paginator = Paginator(incomes,5)
     page_number = request.GET.get('page')
     page_incomes = Paginator.get_page(paginator,page_number)
+    currency = 'PKR - Pakistani Rupee'
 
-    if UserProfile.objects.filter(user = request.user).exists():
-        currency = UserProfile.objects.get(user = request.user).currency
-    else:
-        currency = 'INR - Indian Rupee'
 
     return render(request,'income_app/income.html',{
         'currency':currency,

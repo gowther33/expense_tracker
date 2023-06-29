@@ -91,12 +91,21 @@ WSGI_APPLICATION = 'expense_project.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': os.environ.get('DB_NAME'),
+    #     'USER': os.environ.get('DB_USER'),
+    #     'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
+    #     'HOST': os.environ.get('DB_HOST'),
+    #     'PORT': '5432'
+    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
+        'NAME': 'expense_db',
+        'USER': 'postgres',
+        'PASSWORD': '12345',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -133,7 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Kolkata'
+TIME_ZONE = 'Asia/Karachi'
 
 USE_I18N = True
 
@@ -157,9 +166,9 @@ MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-  'CLOUD_NAME': 'dnvdc2d28',
-  'API_KEY': int(os.environ.get('API_KEY')), 
-  'API_SECRET': str(os.environ.get('API_SECRET')),
+  'CLOUD_NAME': os.environ.get('CLOUD_NAME'),
+  'API_KEY': os.environ.get('API_KEY'), 
+  'API_SECRET': os.environ.get('API_SECRET'),
 }
 
 MESSAGE_TAGS = {
@@ -174,12 +183,12 @@ DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-if DEBUG == False and os.environ.get('SENTRY_DSN','') != '':
-    sentry_sdk.init(
-        dsn=os.environ.get('SENTRY_DSN'),
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=1.0,
-        send_default_pii=True
-    )
+# if DEBUG == False and os.environ.get('SENTRY_DSN','') != '':
+#     sentry_sdk.init(
+#         dsn=os.environ.get('SENTRY_DSN'),
+#         integrations=[DjangoIntegration()],
+#         traces_sample_rate=1.0,
+#         send_default_pii=True
+#     )
 
 django_heroku.settings(locals())

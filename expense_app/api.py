@@ -13,29 +13,29 @@ def expense_summary(request):
     if filter_by != None:
         if filter_by.lower() == 'week':
             date_search =  today_date - timedelta(days=7) 
-            expenses = Expense.objects.filter(user=request.user,date__gte=date_search)
+            expenses = Expense.objects.filter(date__gte=date_search)
             title = 'Expenses per category in this week'
 
         elif filter_by.lower() == 'month':
-            expenses = Expense.objects.filter(user=request.user,date__year=today_date.year,date__month=today_date.month)
+            expenses = Expense.objects.filter(date__year=today_date.year,date__month=today_date.month)
             title = 'Expenses per category in this month'
 
         elif filter_by.lower() == 'year':
-            expenses = Expense.objects.filter(user=request.user,date__year=today_date.year)
+            expenses = Expense.objects.filter(date__year=today_date.year)
             title = 'Expenses per category in this year'
 
         elif filter_by.lower() == 'today':
-            expenses = Expense.objects.filter(user=request.user,date__exact=today_date)
+            expenses = Expense.objects.filter(date__exact=today_date)
             title = 'Expenses per category spent today'
 
         else:
             six_months_ago = today_date - datetime.timedelta(days = 30*6)
-            expenses = Expense.objects.filter(user = request.user,date__gte=six_months_ago)
+            expenses = Expense.objects.filter(date__gte=six_months_ago)
             title = 'Expenses per category in last six months'
 
     else:
         six_months_ago = today_date - datetime.timedelta(days = 30*6)
-        expenses = Expense.objects.filter(user = request.user,date__gte=six_months_ago)
+        expenses = Expense.objects.filter(date__gte=six_months_ago)
         title = 'Expenses per category in last six months'
 
     final_rep = {}
@@ -46,7 +46,7 @@ def expense_summary(request):
 
     def get_expense_category_amount(category):
         amount = 0
-        category = ExpenseCategory.objects.get(user=request.user,name=category)
+        category = ExpenseCategory.objects.get(name=category)
         filtered_by_category = expenses.filter(category=category.id)
         for i in filtered_by_category:
             amount += i.amount
@@ -71,9 +71,9 @@ def search_expense(request):
                 'error':'Not Found'
             })
 
-        user_expenses = Expense.objects.filter(user = request.user)
+        expense = Expense.objects.all()
         
-        expenses = user_expenses.filter(
+        expenses = expense.filter(
             Q(amount__istartswith = query) | 
             Q(date__istartswith = query) | 
             Q(description__icontains = query) | 

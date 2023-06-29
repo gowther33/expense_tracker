@@ -1,9 +1,7 @@
-argon2-cffi==20.1.0
 asgiref==3.3.1
 cairocffi==1.2.0
 CairoSVG==2.5.2
 certifi==2020.12.5
-cffi==1.14.5
 chardet==4.0.0
 cloudinary==1.24.0
 cssselect2==0.4.1
@@ -15,10 +13,9 @@ django-heroku==0.3.1
 gunicorn==20.0.4
 html5lib==1.1
 idna==2.10
-numpy==1.20.2
-pandas==1.2.3
-Pillow==8.1.1
-psycopg2==2.8.6
+numpy
+Pillow
+psycopg2==2.9.5
 pycparser==2.20
 Pyphen==0.10.0
 python-dateutil==2.8.1

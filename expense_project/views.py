@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from expense_app.models import Expense
 from income_app.models import Income
 from datetime import timedelta
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import HttpResponse
 import xlwt
 import csv
@@ -13,6 +13,18 @@ from weasyprint import HTML
 import tempfile
 from user_profile.models import UserProfile
 import datetime
+from datetime import datetime as datetime_custom, timedelta
+from django.contrib import messages
+from django.core.paginator import Paginator
+
+
+
+# Sum all expenses in the page
+def expense_sum(expenses):
+    page_total = 0
+    for expense in expenses:
+        page_total += expense.amount
+    return page_total
 
 @login_required(login_url='login')
 def dashboard(request):
@@ -22,10 +34,10 @@ def dashboard(request):
     start_today_data = today_date_time.replace(hour=0, minute=0, second=0, microsecond=0)
     end_today_data = today_date_time.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    incomes_today_display = Income.objects.filter(user=request.user,created_at__range=(start_today_data,end_today_data)).order_by('-created_at')
-    expenses_today_display = Expense.objects.filter(user=request.user,created_at__range=(start_today_data,end_today_data)).order_by('-created_at')
+    incomes_today_display = Income.objects.filter(created_at__range=(start_today_data,end_today_data)).order_by('-created_at')
+    expenses_today_display = Expense.objects.filter(created_at__range=(start_today_data,end_today_data)).order_by('-created_at')
 
-    expenses_year = Expense.objects.filter(user=request.user,date__year=today_date.year)
+    expenses_year = Expense.objects.filter(date__year=today_date.year)
     expenses_month = expenses_year.filter(date__month=today_date.month)
     expenses_today = expenses_month.filter(date__exact=today_date)
     expenses_week = expenses_month.filter(date__gte=week_date_time)
@@ -52,6 +64,84 @@ def dashboard(request):
         'spent_week_count':spent_week_count,
     })
 
+# User dashboard is expense_user page
+@login_required(login_url='login')
+def _dashboard(request):
+    filter_context = {}
+    base_url = f''
+    date_from_html = ''
+    date_to_html = ''
+
+    today = datetime.datetime.now()
+    delta = today - timedelta(days=5)
+    today = today.strftime("%Y-%m-%d")
+    delta = delta.strftime("%Y-%m-%d")
+
+    expenses = Expense.objects.all().order_by('-date')
+    try:
+
+        if 'date_from' in request.GET and request.GET['date_from'] != '':
+            date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+            
+            filter_context['date_from'] = request.GET['date_from']
+            date_from_html = request.GET['date_from']
+
+            if 'date_to' in request.GET and request.GET['date_to'] != '':
+
+                date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+
+                filter_context['date_to'] = request.GET['date_to']
+                date_to_html = request.GET['date_to']
+                expenses = expenses.filter(
+                    Q(date__gte = date_from )
+                    &
+                    Q(date__lte = date_to)
+                ).order_by('-date')
+
+            else:
+                expenses = expenses.filter(
+                    date__gte = date_from
+                ).order_by('-date')
+
+        elif 'date_to' in request.GET and request.GET['date_to'] != '':
+
+            date_to_html = request.GET['date_to']
+            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_to']
+            expenses = expenses.filter(
+                date__lte = date_to
+            ).order_by('-date')
+        
+        else:
+            date_from = delta # from
+            date_to = today # today
+            expenses = expenses.filter(
+                Q(date__gte = date_from )
+                &
+                Q(date__lte = date_to)
+            ).order_by('-date')
+    
+    except:
+        messages.error(request,'Something went wrong')
+        return redirect('expense')
+    
+    base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
+    paginator = Paginator(expenses,10)
+    page_number = request.GET.get('page')
+    page_expenses = Paginator.get_page(paginator,page_number)
+    page_total = expense_sum(page_expenses) # Sum total
+    currency = 'PKR - Pakitani Rupee'
+
+
+    return render(request,'expense_app/expense_user.html',{
+        'currency':currency,
+        'page_expenses':page_expenses,
+        'expenses':expenses,
+        'filter_context':filter_context,
+        'base_url':base_url,
+        'page_total':page_total
+    })
+
 @login_required(login_url='login')
 def complete_spreadsheet_excel(request):
     response = HttpResponse(content_type = 'application/ms-excel')
@@ -68,8 +158,8 @@ def complete_spreadsheet_excel(request):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
 
     fontStyle = xlwt.XFStyle()
-    incomes = Income.objects.filter(user=request.user).order_by('date')
-    expenses = Expense.objects.filter(user=request.user).order_by('date')
+    incomes = Income.objects.all().order_by('date')
+    expenses = Expense.objects.all().order_by('date')
     income_list = incomes.values_list('date','source__source','description','amount')
     expense_list = expenses.values_list('date','category__name','description','amount')
     rows = income_list
@@ -119,8 +209,8 @@ def complete_spreadsheet_csv(request):
     
     writer = csv.writer(response)
     writer.writerow(['Date','Source','Category','Description','Amount In', 'Amount Out'])
-    incomes = Income.objects.filter(user=request.user).order_by('date')
-    expenses = Expense.objects.filter(user=request.user).order_by('date')
+    incomes = Income.objects.all().order_by('date')
+    expenses = Expense.objects.all().order_by('date')
     income_list = incomes.values_list('date','source__source','description','amount')
     expense_list = expenses.values_list('date','category__name','description','amount')
     writer.writerow(['','','',''])
@@ -159,8 +249,8 @@ def complete_spreadsheet_pdf(request):
         profile_pic = user_profile.profile_pic
         currency = user_profile.currency[:3]
 
-    expenses = Expense.objects.filter(user=request.user).order_by('date')
-    incomes = Income.objects.filter(user=request.user).order_by('date')
+    expenses = Expense.objects.all().order_by('date')
+    incomes = Income.objects.all().order_by('date')
     total_expense = expenses.aggregate(Sum('amount'))['amount__sum']
     total_income = incomes.aggregate(Sum('amount'))['amount__sum']
     

@@ -289,9 +289,6 @@ def expense_memo(request):
         return redirect('add_expense_category')
 
 
-
-
-
 # For staff users
 @login_required(login_url='login')
 def add_expense_user(request):

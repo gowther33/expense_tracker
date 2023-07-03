@@ -1,11 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>This is a testing page</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title_main %}Expense Memo{% endblock %}
+{% block body_main %}
+    <!-- {% include "partials/_sidebar_main.html" %} -->
+    <div class="main-content bg-primary" id="panel">
+    <!-- {% include "partials/_navbar_main.html" %} -->
+    <div class="header bg-primary pb-6">
+        <!-- <div class="mr-5 ml-5">
+            <div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div>
+        </div> -->
+        <div class="container-fluid">
+            <div class="header-body">
+                <div class="row align-items-center py-4">
+                    <div class="col-lg-6 col-7">
+                        <!-- <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                            <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'dashboard' %}">
+                                        <i class="fas fa-home"></i>
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{% url 'expense' %}">Expense</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Edit Expense</li>
+                            </ol>
+                        </nav> -->
+                    </div>
+                    <!-- <div class="col-lg-6 col-5 text-right">
+                        <a href="{% url 'delete_expense' expense.id %}" class="btn btn btn-warning">Delete Expense</a>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col mr-5 ml-5">
+          <div class="card">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">  
+                <div class="col">
+                  <h5 class="h3 mb-0 text-center">Expense Memo</h5>
+                  <form action="{% url 'edit_expense' expense.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group"><label for="">Amount</label>
+                        <input class="form-control form-control-sm" type = "number" name="amount" value = "{{ values.amount }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Category</label>
+                        <input class="form-control form-control-sm" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Description</label>
+                        <input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date of Expense</label>
+                        <input class="form-control form-control-sm" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
+                    </div>
+                    <!-- signature-line -->
+                    <div class="signature-container">
+                        <div class="signature-line">
+                            <label for="paid-by">Paid by:</label>
+                            <div class="line"></div>
+                        </div>
+                        <div class="signature-line">
+                            <label for="received-by">Received by:</label>
+                            <div class="line"></div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- form 2 -->
+                
+                <hr>
+                <h5 class="h3 mb-0 text-center">Expense Memo</h5>
+                <form action="{% url 'edit_expense' expense.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group"><label for="">Amount</label>
+                        <input class="form-control form-control-sm" type = "number" name="amount" value = "{{ values.amount }}"  readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Category</label>
+                        <input class="form-control form-control-sm" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Description</label>
+                        <input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date of Expense</label>
+                        <input class="form-control form-control-sm" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
+                    </div>
+                    <div class="signature-container">                    
+                        <!-- signature-line -->
+                        <div class="signature-line">
+                            <label for="paid-by">Paid by:</label>
+                            <div class="line"></div>
+                        </div>
+                        <div class="signature-line">
+                            <label for="received-by">Received by:</label>
+                            <div class="line"></div>
+                        </div>
+                        <!-- signature-line -->
+                    </div>
+                </form>
+                <div id="no-print" class="text-center">
+                    <button onclick="window.print()" type="button" class="btn btn-primary">Print</button>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

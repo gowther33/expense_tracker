@@ -93,11 +93,12 @@
                             <th style="font-size: small;">Description</th>
                             <!-- <th style="font-size: small;">
                               <span class="row ml-1"> Date <span class="col">
-
+                                
                               </span> 
                             </span>
-                            </th> -->
-                            <th style="font-size: small;">Date/Time </th>
+                          </th> -->
+                          <th style="font-size: small;">Date/Time </th>
+                          <th style="font-size: small;">Print</th>        
                           </tr>
                         </thead>
                         <tbody id="table-body-data" >{% for expense in page_expenses %}
@@ -106,6 +107,9 @@
                             <td>{{expense.category.name | truncatechars:20 }}</td>
                             <td>{{expense.description | truncatechars:30 }}</td>
                             <td>{{expense.created_at}}</td>
+                            <td>
+                              <a href="{% url 'expense_memo' expense.id %}" class="btn btn-warning btn-sm" target="_blank">Print</a>
+                            </td>
 
                           </tr>{% endfor %}
                           <!-- Added -->

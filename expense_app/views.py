@@ -232,61 +232,30 @@ def add_expense(request):
 
 
 # For Expense Memo
-# Added
+# Added for Admin
 @login_required(login_url='login')
-def expense_memo(request):
-    
-    if ExpenseCategory.objects.all().exists():
+def expense_memo(request, id):
+    if Expense.objects.filter(id=id).exists():
+            expense = Expense.objects.get(id=id)
         
-        categories = ExpenseCategory.objects.all()
-
-        context = {
-            'categories' : categories,
-            'values':request.POST
-        }
-
-        if request.method == 'GET':
-            return render(request,'expense_app/expense_memo.html',context)
-
-        if request.method == 'POST':
-            amount = request.POST.get('amount','')
-            description = request.POST.get('description','')
-            category = request.POST.get('category','')
-            date = request.POST.get('expense_date','')
-
-            if amount== '':
-                messages.error(request,'Amount cannot be empty')
-                return render(request,'expense_app/expense_memo.html',context)
-            
-            amount = float(amount)
-            if amount <= 0:
-                messages.error(request,'Amount should be greater than zero')
-                return render(request,'expense_app/expense_memo.html',context)
-
-            if description == '':
-                messages.error(request,'Description cannot be empty')
-                return render(request,'expense_app/expense_memo.html',context)
-
-            if category == '':
-                messages.error(request,'ExpenseCategory cannot be empty')
-                return render(request,'expense_app/expense_memo.html',context)
-
-            if date == '':
-                date = localtime()
-
-            category_obj = ExpenseCategory.objects.get(name =category)
-            Expense.objects.create(
-                amount=amount,
-                date=date,
-                description=description,
-                category=category_obj
-            ).save()
-
-            messages.success(request,'Expense Saved Successfully')
-            return redirect('expense_memo')
     else:
-        messages.error(request,'Please add a category first.')
-        return redirect('add_expense_category')
+        if request.user.is_superuser:
+            messages.error(request,'Expense does not exists')
+            return redirect('expense')
+        else:
+            messages.error(request,'Expense does not exists')
+            return redirect('expense_user')
+        
+    categories = ExpenseCategory.objects.all().exclude(id=expense.category.id)
+
+    context = {
+        'expense':expense,
+        'values': expense,
+        'categories':categories
+    }
+        
+    if request.method == 'GET':
+        return render(request,'expense_app/expense_memo.html',context)
 
 
 # For staff users

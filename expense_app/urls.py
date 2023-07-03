@@ -11,14 +11,16 @@ urlpatterns = [
     
     path('add-expense/',views.add_expense,name="add_expense"),
     
-    path('expense-memo/',views.expense_memo,name="expense_memo"), #added
+    path('expense-memo/<int:id>/',views.expense_memo,name="expense_memo"), #added for printing
     
     path('add-expense_user/',views.add_expense_user,name="add_expense_user"),    
 
     path('add-category/',views.add_expense_category,name="add_expense_category"),
     path('edit-category/<int:id>/',views.edit_expense_category,name="edit_expense_category"),
     path('delete-category/<int:id>/',views.delete_expense_category,name="delete_expense_category"),
+
     path('edit-expense/<int:id>/',views.edit_expense,name="edit_expense"),
+    
     path('delete-expense/<int:id>/',views.delete_expense,name="delete_expense"),
 
     path('expense-summary-data',api.expense_summary,name="expense_summary_data"),

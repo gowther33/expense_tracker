@@ -5,6 +5,34 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title_main %}{% endblock %}</title>
+        <style>
+            .signature-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .signature-line label {
+                width: 100px;
+                font-weight: normal;
+            }
+            
+            .signature-line .line {
+                flex:1;
+                height: 1px;
+                margin-top: 20px;
+                border-bottom: 1px solid #000;
+            }
+            @media print {
+            body {
+                padding: 20px;
+            }
+            #no-print {
+                  visibility: hidden;
+            }
+        }
+        </style>
         <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/gif" sizes="16x16">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
         <link href="{% static 'css/nucleo.css' %}" rel="stylesheet">

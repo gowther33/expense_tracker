@@ -13,7 +13,7 @@ urlpatterns = [
     
     path('expense-memo/<int:id>/',views.expense_memo,name="expense_memo"), #added for printing
     
-    path('add-expense_user/',views.add_expense_user,name="add_expense_user"),    
+    path('add-expense_user/',views.add_expense,name="add_expense_user"),    
 
     path('add-category/',views.add_expense_category,name="add_expense_category"),
     path('edit-category/<int:id>/',views.edit_expense_category,name="edit_expense_category"),

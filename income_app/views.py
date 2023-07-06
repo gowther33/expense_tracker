@@ -182,7 +182,10 @@ def add_income(request):
     	}
 
         if request.method == 'GET':
-            return render(request,'income_app/add_income.html',context)
+            if request.user.is_superuser:
+                return render(request,'income_app/add_income.html',context)
+            else:
+                return render(request,'income_app/add_income_user.html',context)
         
         if request.method == 'POST':
             amount = request.POST.get('amount','')
@@ -191,98 +194,64 @@ def add_income(request):
             date = request.POST.get('income_date','')
             
             if amount == '':
-                messages.error(request,'Amount cannot be empty')
-                return render(request,'income_app/add_income.html',context)
+                if request.user.is_superuser:
+                    messages.error(request,'Amount cannot be empty')
+                    return render(request,'income_app/add_income.html',context)
+                else:
+                    messages.error(request,'Amount cannot be empty')
+                    return render(request,'income_app/add_income_user.html',context)
             
             amount = float(amount)
             if amount<=0 :
-                messages.error(request,'Amount should be greater than zero')
-                return render(request,'income_app/add_income.html',context)
+                if request.user.is_superuser:
+                    messages.error(request,'Amount should be greater than zero')
+                    return render(request,'income_app/add_income.html',context)
+                else:
+                    messages.error(request,'Amount should be greater than zero')
+                    return render(request,'income_app/add_income_user.html',context)
+                
             
             if description == '':
-                messages.error(request,'Description cannot be empty')
-                return render(request,'income_app/add_income.html',context)
-            
+                if request.user.is_superuser:
+                    messages.error(request,'Description cannot be empty')
+                    return render(request,'income_app/add_income.html',context)
+                else:
+                    messages.error(request,'Description cannot be empty')
+                    return render(request,'income_app/add_income_user.html',context)
+                
             if source == '':
-                messages.error(request,'IncomeSource cannot be empty')
-                return render(request,'income_app/add_income.html',context)
-            
+                if request.user.is_superuser:
+                    messages.error(request,'IncomeSource cannot be empty')
+                    return render(request,'income_app/add_income.html',context)
+                else:
+                    messages.error(request,'IncomeSource cannot be empty')
+                    return render(request,'income_app/add_income_user.html',context)
+                
             if date == '':
                 date = localtime()
             
             # source_obj = IncomeSource.objects.get(user=request.user,source =source)
             source_obj = IncomeSource.objects.get(source =source)
-            Income.objects.create(
+            income_obj = Income.objects.create(
                 amount=amount,
                 date=date,
                 description=description,
                 source=source_obj
-            ).save()
+            )
+            if request.user.is_superuser:
+                messages.success(request,'Income Saved Successfully')
+                return redirect('income')
+            else:
+                messages.success(request,'Income Saved Successfully')
+                return redirect('income_user')
 
-            messages.success(request,'Income Saved Successfully')
-            return redirect('income')
     else:
-        messages.error(request,'Please add a income source first.')
-        return redirect('add_income_source')
-
-# For staff users
-@login_required(login_url='login')
-def add_income_user(request):
-
-    # if IncomeSource.objects.filter(user=request.user).exists():
-    if IncomeSource.objects.all().exists():
-        
-        # sources = IncomeSource.objects.filter(user=request.user)
-        sources = IncomeSource.objects.all()
-
-        context = {
-            'sources' : sources,
-            'values':request.POST
-    	}
-
-        if request.method == 'GET':
-            return render(request,'income_app/add_income_user.html',context)
-        
-        if request.method == 'POST':
-            amount = request.POST.get('amount','')
-            description = request.POST.get('description','')
-            source = request.POST.get('source','')
-            date = request.POST.get('income_date','')
-            
-            if amount == '':
-                messages.error(request,'Amount cannot be empty')
-                return render(request,'income_app/add_income_user.html',context)
-            
-            amount = float(amount)
-            if amount<=0 :
-                messages.error(request,'Amount should be greater than zero')
-                return render(request,'income_app/add_income_user.html',context)
-            
-            if description == '':
-                messages.error(request,'Description cannot be empty')
-                return render(request,'income_app/add_income_user.html',context)
-            
-            if source == '':
-                messages.error(request,'IncomeSource cannot be empty')
-                return render(request,'income_app/add_income_user.html',context)
-            
-            if date == '':
-                date = localtime()
-            
-            source_obj = IncomeSource.objects.get(source =source)
-            Income.objects.create(
-                amount=amount,
-                date=date,
-                description=description,
-                source=source_obj
-            ).save()
-
-            messages.success(request,'Income Saved Successfully')
+        if request.user.is_superuser:
+            messages.error(request,'Please add a income source first.')
+            return redirect('add_income_source')
+        else:
+            messages.error(request,'Please ask the Admin to add income sources first.')
             return redirect('income_user')
-    else:
-        messages.error(request,'Please ask the Admin to add income sources first.')
-        return redirect('income_user')
-
 
 @login_required(login_url='login')
 def add_income_source(request):

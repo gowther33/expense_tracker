@@ -1,0 +1,11 @@
+/* added */
+.memo-item{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+
+
+.memo-input{
+    border-bottom: 1px solid #ccc !important; 
+}

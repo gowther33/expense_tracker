@@ -98,7 +98,7 @@
                             </span>
                           </th> -->
                           <th style="font-size: small;">Date/Time </th>
-                          <th style="font-size: small;">Print</th>        
+                          <th style="font-size: small;">Action</th>        
                           </tr>
                         </thead>
                         <tbody id="table-body-data" >{% for expense in page_expenses %}
@@ -108,9 +108,20 @@
                             <td>{{expense.description | truncatechars:30 }}</td>
                             <td>{{expense.created_at}}</td>
                             <td>
-                              <a href="{% url 'expense_memo' expense.id %}" class="btn btn-warning btn-sm" target="_blank">Print</a>
+                              <div class="dropdown ms-auto">
+                                <!-- Print button -->
+                                <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="{% url 'expense_memo' expense.id %}" target="_blank">                                      
+                                      <span class="dropdown-item">
+                                          <i class="fas fa-print mx-2"></i> Print
+                                      </span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
                             </td>
-
                           </tr>{% endfor %}
                           <!-- Added -->
                           <td>{{page_total}}</td> 

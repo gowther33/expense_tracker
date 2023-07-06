@@ -98,8 +98,9 @@
                             </th> -->
 
                             <th style="font-size: small;">Date/Time </th>
-                            <th style="font-size: small;">Action</th>
-                            <th style="font-size: small;">Print</th>                            
+                            <!-- <th style="font-size: small;">Action</th>
+                            <th style="font-size: small;">Print</th>     -->
+                            <th style="font-size: small;">Actions</th>                            
                           </tr>
                         </thead>
                         <tbody id="table-body-data" >{% for expense in page_expenses %}
@@ -109,11 +110,32 @@
                             <td>{{expense.description | truncatechars:30 }}</td>
                             <!-- <td>{{expense.date}}</td> -->
                             <td>{{expense.created_at}}</td>
-                            <td>
+                            <!-- <td>
                               <a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a>
                             </td>
                             <td>
                               <a href="{% url 'expense_memo' expense.id %}" class="btn btn-warning btn-sm" target="_blank">Print</a>
+                            </td> -->
+                            <td>
+                              <div class="dropdown ms-auto">
+                                <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="{% url 'edit_expense' expense.id %}" >
+                                      <span class="dropdown-item">
+                                        <i class="fas fa-pen mx-2"></i> Edit
+                                      </span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a href="{% url 'expense_memo' expense.id %}" target="_blank">                                      
+                                      <span class="dropdown-item">
+                                          <i class="fas fa-print mx-2"></i> Print
+                                      </span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->

@@ -26,10 +26,10 @@ class Due(models.Model):
 to change:
 import dues functionality
 and download
+
 searching.js for dues
 sorting.js for dues
 
-edit_due to check
-income_count id
+income_count id 
 
 """

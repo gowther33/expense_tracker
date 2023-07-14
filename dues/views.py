@@ -255,103 +255,6 @@ def add_due(request):
             messages.error(request,'Please ask the Admin to add income sources first.')
             return redirect('due_user')
 
-# @login_required(login_url='login')
-# def add_income_source(request):
-#     if request.user.is_superuser:
-#         # sources = IncomeSource.objects.filter(user=request.user)
-#         sources = IncomeSource.objects.all()
-        
-#         context = {
-#             'sources' : sources,
-#             'values':request.POST,
-#             'create':True
-#         }
-
-#         if request.method == 'GET': 
-#             return render(request,'dues/due_source_import.html',context)
-        
-#         if request.method == 'POST':
-#             source = request.POST.get('source','')
-            
-#             if source == '':
-#                 messages.error(request,'IncomeSource cannot be empty')
-#                 return render(request,'dues/due_source_import.html',context)
-            
-#             source = source.lower().capitalize()
-#             if IncomeSource.objects.filter(source = source).exists():
-#                 messages.error(request,f'Income Source ({source}) already exists.')
-#                 return render(request,'dues/due_source_import.html',context)
-            
-#             IncomeSource.objects.create(source = source).save()
-            
-#             messages.success(request,'IncomeSource added')
-#             return render(request,'dues/due_source_import.html',{
-#                 'sources' : sources,
-#                 'create':True
-#             })
-#     else:
-#         messages.error(request,'Only Admin can add income source.')
-#         return redirect('due_user')
-
-# @login_required(login_url='login')
-# def edit_due_source(request,id):
-#     if request.user.is_superuser:
-#         if IncomeSource.objects.filter(pk=id).exists():
-#             source_obj = IncomeSource.objects.get(pk=id)
-#         else:
-#             messages.error(request,'Income source does not exists')
-#             return redirect('add_due_source')
-
-#         context = {
-#             'value' : source_obj.source,
-#             'update':True,
-#             'id':source_obj.id
-#         }
-
-#         if request.method == 'GET': 
-#             return render(request,'dues/due_source_import.html',context)
-        
-#         if request.method == 'POST':
-#             source = request.POST.get('source','')
-            
-#             context = {
-#                 'value':source,
-#                 'update':True,
-#                 'id':source_obj.id
-#             }
-
-#             if source == '':
-#                 messages.error(request,'IncomeSource cannot be empty')
-#                 return render(request,'dues/due_source_import.html',context)
-            
-#             source = source.lower().capitalize()
-#             if IncomeSource.objects.filter(source = source).exists():
-#                 messages.error(request,f'Income Source ({source}) already exists.')
-#                 return render(request,'dues/due_source_import.html',context)
-            
-#             source_obj.source = source
-#             source_obj.save()
-            
-#             messages.success(request,'Income Source Updated')
-#             return redirect('add_due_source')
-#     else:
-#         messages.error(request,'Only Admin can edit income sources.')
-#         return redirect('due_user')
-
-# @login_required(login_url='login')
-# def delete_income_source(request,id):
-#     if request.user.is_superuser:
-#         if IncomeSource.objects.filter(pk=id).exists():
-#             income_source = IncomeSource.objects.get(pk=id)            
-#             income_source.delete()
-#             messages.success(request,'Deleted income source')
-#             return redirect('add_due_source')
-#         messages.error(request,'Income source does not exists.')
-#         return redirect('add_due_source')
-#     else:
-#         messages.error(request,'Only Admin can delete income sources.')
-#         return redirect('due_user')        
-
 
 @login_required(login_url='login')
 def edit_due(request,id):
@@ -414,7 +317,10 @@ def delete_due(request,id):
     if request.user.is_superuser:
         if Due.objects.filter(id=id).exists():
             due = Due.objects.get(id=id)
-
+            due_source = Income.objects.get(id = due.source.id)
+            # Add income in due source
+            due_source.amount += due.amount
+            due_source.save()
             due.delete()
             messages.success(request,'Due Deleted Successfully')
             return redirect('due')
@@ -454,7 +360,6 @@ def due_received(request,id):
         else:
             messages.error(request,'Something went Wrong. Please Try Again')
             return redirect('due_user')
-
 
 
 @login_required(login_url='login')
@@ -510,197 +415,7 @@ def download_as_csv(request,filter_by):
     writer.writerow(['TOTAL','','',str(dues.aggregate(Sum('amount'))['amount__sum'])])
     return response
 
-@login_required(login_url='login')
-def import_income(request):
-    return render(request,'income_app/income_source_import.html',{
-        'upload':True
-    })
 
-@login_required(login_url='login')
-def upload_csv(request):
-
-    if request.method == 'POST':
-        try:
-            csv_file = request.FILES.get('income_csv_file')
-
-            if csv_file == None:
-                messages.error(request,'CSV file required')
-                return redirect('import_income')
-
-            if not csv_file.name.endswith('.csv'):
-                messages.error(request,'Please Upload a CSV file.')
-                return redirect('import_income')
-            
-            if csv_file.multiple_chunks():
-                messages.error(request,"Uploaded file is too big (%.2f MB)." % (csv_file.size/(1000*1000),))
-                return redirect('import_income')
-
-            csv = pd.read_csv(csv_file)
-
-            if csv.shape[0] > 10:
-                messages.error(request,'Please upload a CSV file with less than 10 rows.')
-                return redirect('import_income')
-
-            csv.columns = [c.lower() for c in csv.columns]
-
-            if IncomeSource.objects.filter(source='Loaded From Csv'):
-                csv_income_source = IncomeSource.objects.get(source='Loaded From Csv')
-            else:
-                csv_income_source = IncomeSource.objects.create(source='Loaded From Csv')
-                csv_income_source.save()
-
-            income_count = 0
-            for i,row in csv.iterrows():
-                if not pd.isna(row['date']):
-                    date = row['date'].split('-')
-                    try:
-                        date = datetime.date(2000 + int(date[2]) ,int(date[1]),int(date[0]))
-                    except:
-                        date = datetime.date.today()
-                else:
-                    date = datetime.date.today()
-
-                if not pd.isna(row['source']):
-                    source = row['source'].strip().lower().capitalize()
-                    if IncomeSource.objects.filter(source = source).exists():
-                        source = IncomeSource.objects.get(source = source)
-                    else:
-                        source = IncomeSource.objects.create(source = source)
-                        source.save()
-                else:
-                    source = csv_income_source
-                
-                if not pd.isna(row['description']):
-                    description = row['description'].strip()
-                else:
-                    description = 'Loaded From Csv'
-                
-                if not pd.isna(row['amount']):
-                    Due.objects.create(
-                        amount = float(row['amount']),
-                        date = date,
-                        description = description,
-                        source = source
-                    ).save()
-                    income_count += 1
-            
-            income_send_success_mail(request,csv_file.name,income_count,'CSV')
-            messages.success(request,'Incomes are saved from csv file.')
-            return redirect('due')
-        
-        except Exception as e:
-            income_send_error_mail(request,csv_file.name,'CSV')
-            print(repr(e))
-
-            messages.error(request,'Please Check if the format of csv file is correct.')
-            return redirect('import_income')
-
-@login_required(login_url='login')
-def upload_excel(request):
-
-    if request.method == 'POST':
-        try:
-            excel_file = request.FILES.get('income_excel_file')
-            
-            if excel_file == None:
-                messages.error(request,'Excel file required')
-                return redirect('import_income')
-                
-            if not (excel_file.name.endswith('.xls') or excel_file.name.endswith('.xlsx')):
-                messages.error(request,'Please Upload a Excel file.')
-                return redirect('import_income')
-
-            if excel_file.multiple_chunks():
-                messages.error(request,"Uploaded file is too big (%.2f MB)." % (excel_file.size/(1000*1000),))
-                return redirect('import_income')
-            
-            if excel_file.name.endswith('.xls'):
-                data = xls_get(excel_file, column_limit=4)
-            elif excel_file.name.endswith('.xlsx'):
-                data = xlsx_get(excel_file, column_limit=4)
-            else:
-                messages.error(request,'Please Upload a Excel file.')
-                return redirect('import_income')
-            
-            keys_excel = list(data.keys())
-
-            income_excel_data = data[keys_excel[0]]
-
-            try:
-                income_excel_data.remove([])
-            except:
-                pass
-
-            if len(income_excel_data) > 11:
-                messages.error(request,'Please upload a excel file with less than 10 rows.')
-                return redirect('import_income')
-
-            if IncomeSource.objects.filter(source='Loaded From Excel'):
-                excel_income_source = IncomeSource.objects.get(source='Loaded From Excel')
-            else:
-                excel_income_source = IncomeSource.objects.create(source='Loaded From Excel')
-                excel_income_source.save()
-
-            headers = income_excel_data.pop(0)
-            headers = [c.lower() for c in headers] 
-
-            if headers != ['date', 'source', 'description', 'amount']:
-                income_send_error_mail(request,excel_file.name,'Excel')
-                messages.error(request,'Please Check if the format of excel file is correct.')
-                return redirect('import_income')
-
-            income_count = 0
-            for row in income_excel_data:
-
-                if(len(row) != 4):
-                    break
-
-                if not row[0] == '':
-                    if isinstance(row[0],datetime.date):
-                        date = row[0]
-                    else:
-                        date = row['date'].split('-')
-                        try:
-                            date = datetime.date(2000 + int(date[2]) ,int(date[1]),int(date[0]))
-                        except:
-                            date = datetime.date.today()
-                else:
-                    date = datetime.date.today()
-
-                if not row[1] == '':
-                    source = row[1].strip().lower().capitalize()
-                    if IncomeSource.objects.filter(source = source).exists():
-                        income_source = IncomeSource.objects.get(source = source)
-                    else:
-                        income_source = IncomeSource.objects.create(source = source)
-                        income_source.save()
-                else:
-                    income_source = excel_income_source
-                
-                if not row[2] == '':
-                    description = row[2].strip()
-                else:
-                    description = 'Loaded From Excel'
-                
-                if not row[3] == '':
-                    Due.objects.create(
-                        amount = float(row[3]),
-                        date = date,
-                        description = description,
-                        source = income_source
-                    ).save()
-                    income_count += 1
-            
-            income_send_success_mail(request,excel_file.name,income_count,'Excel')
-            messages.success(request,'Incomes are saved from excel file.')
-            return redirect('due')
-        
-        except Exception as e:
-            income_send_error_mail(request,excel_file.name,'Excel')
-            print(repr(e))
-
-            messages.error(request,'Please Check if the format of excel file is correct.')
-            return redirect('import_income')
 
 @login_required(login_url='login')
 def due_page_sort(request):

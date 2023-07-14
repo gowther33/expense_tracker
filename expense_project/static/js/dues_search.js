@@ -19,7 +19,7 @@ const searchFunction = (e) => {
   if (searchValue.trim().length > 0) {
     paginationContainer.style.display = "none";
     tbody.innerHTML = "";
-    fetch("/income/search", {
+    fetch("/due/search", {
       body: JSON.stringify({ search_query: searchValue }),
       method: "POST",
       credentials: "same-origin",

@@ -7,7 +7,7 @@ class IncomeSource(models.Model):
 	source = models.CharField(max_length = 256)
 	created_at = models.DateTimeField(default=localtime)
 	def __str__(self):
-		return str(self.user) + self.source
+		return self.source
 
 	class Meta:
 		verbose_name_plural = 'Income Sources'

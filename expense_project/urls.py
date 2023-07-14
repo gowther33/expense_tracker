@@ -34,11 +34,12 @@ urlpatterns = [
     path('expense/',include('expense_app.urls')),
     path('income/',include('income_app.urls')),
     path('user/',include('user_profile.urls')),
+    path('due/',include('dues.urls')),
     path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
 
-admin.site.site_header = 'Expense Income Tracker Admin'
-admin.site.index_title = 'Expense-Income-Tracker'
+admin.site.site_header = 'Expense Tracker Admin'
+admin.site.index_title = 'Expense-Tracker'

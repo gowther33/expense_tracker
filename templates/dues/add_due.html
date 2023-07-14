@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% block title_main %}Add Expense{% endblock %}
+{% block title_main %}Add Incomes{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content bg-primary" id="panel">
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
-      <div class="mr-5 ml-5">
-        <div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div>
-      </div>
+      <div class="mr-5 ml-5"><div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div></div>
       <div class="container-fluid">
         <div class="header-body">
           <div class="row align-items-center py-4">
@@ -20,9 +18,9 @@
                     </a>
                   </li>
                   <li class="breadcrumb-item">
-                    <a href="{% url 'expense' %}">Expense</a>
+                    <a href="{% url 'due' %}">Dues</a>
                   </li>
-                  <li class="breadcrumb-item active" aria-current="page">Add Expense</li>
+                  <li class="breadcrumb-item active" aria-current="page">Add Due</li>
                 </ol>
               </nav>
             </div>
@@ -37,8 +35,8 @@
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 mb-0 text-center">Add Expenses</h5>
-                  <form action="{% url 'add_expense' %}" method="POST">
+                  <h5 class="h3 mb-0 text-center">Add Dues</h5>
+                  <form action="{% url 'add_due' %}" method="POST">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="">Amount</label>
@@ -49,19 +47,19 @@
                         <input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}">
                     </div>
                     <div class="form-group">
-                        <select class="form-control form-control-sm" name="category">
-                            {% for category in categories %}
-                                <option name = "category" value="{{category.name}}">{{category.name}}</option>
+                        <label for="">Source</label>
+                        <select class="form-control form-control-sm" name="source">
+                            {% for source in sources %}
+                                <option name = "source" value="{{source.source}}">{{source.source}}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="">Date of Expense</label>
-                        <input class="form-control form-control-sm" type = "date" name="expense_date">
+                        <label for="">Date of Income</label>
+                        <input class="form-control form-control-sm" type = "date" name="income_date">
                     </div>
                     <div class="text-center">
-                        <button type="submit" name="save_data" class="btn btn-primary">Save Expense</button>
-                        <button type="submit" name="save_print_data" class="btn btn-primary">Save & Print</button>
+                        <button type="submit" class="btn btn-primary">Save Income</button>
                     </div>
                 </form>
                 </div>
@@ -71,10 +69,5 @@
         </div>
       </div>
     </div>
-    <script>
-      function redirect(){
-
-      }
-    </script>
   </div>
 {% endblock %}

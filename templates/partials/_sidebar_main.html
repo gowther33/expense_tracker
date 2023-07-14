@@ -23,12 +23,14 @@
                         <a class="nav-link" href="{% url 'add_expense_category' %}"> 
                             <i class="ni ni-collection"></i> 
                             <span class="nav-link-text">Category</span> 
-                        </a> </li><li class="nav-item"> 
-                            <a class="nav-link" href="{% url 'expense_summary' %}"> 
+                        </a> 
+                    </li>
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'expense_summary' %}"> 
                                 <i class="ni ni-chart-pie-35"></i> 
                                 <span class="nav-link-text">Expense Summary</span> 
-                            </a> 
-                        </li>
+                        </a> 
+                    </li>
                     </ul> 
                     <hr class="my-3"> 
                     <h6 class="navbar-heading p-0 text-muted"> 
@@ -53,7 +55,18 @@
                                 <span class="nav-link-text">Income Summary</span> 
                             </a> 
                         </li>
+                    </ul>
+                    <hr class="my-3"> 
+                    <!-- Dues -->
+                    <ul class="navbar-nav mb-md-3"> 
+                        <li class="nav-item"> 
+                            <a class="nav-link" href="{% url 'due' %}"> 
+                                <i class="ni ni-money-coins"></i> 
+                                <span class="nav-link-text">Dues</span> 
+                            </a> 
+                        </li>
                     </ul> 
+                    <!-- Dues -->
                     <hr class="my-3"> 
                     <h6 class="navbar-heading p-0 text-muted"> 
                         <span class="docs-normal">Account</span> 

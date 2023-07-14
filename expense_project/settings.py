@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'expense_app',
     'user_profile',
     'income_app',
+    'dues',
     'django_user_agents',
 ]
 

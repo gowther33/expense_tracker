@@ -10,7 +10,7 @@ urlpatterns = [
     path('income-sort/',views.income_page_sort,name="income_page_sort"),
     path('add-income/',views.add_income,name="add_income"),
 
-    path('add-income-user/',views.add_income_user,name="add_income_user"),
+    path('add-income-user/',views.add_income,name="add_income_user"),
     
     path('add-source/',views.add_income_source,name="add_income_source"),
     path('edit-source/<int:id>/',views.edit_income_source,name="edit_income_source"),

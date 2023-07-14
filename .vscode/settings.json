@@ -1,0 +1,6 @@
+{
+    "settings":{
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.defaultInterpreterPath": "D:/expense_tracker/env/Scripts/python.exe"
+    }
+}

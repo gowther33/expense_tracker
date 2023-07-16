@@ -7,6 +7,25 @@
             <div class="collapse navbar-collapse" id="sidenav-collapse-main"> 
 
                 <hr class="my-3"> 
+                <!-- Smart over -->
+                <h6 class="navbar-heading p-0 text-muted"> 
+                    <span class="docs-normal">Smart Over</span> 
+                </h6> 
+                <ul class="navbar-nav mb-md-3"> <li class="nav-item"> 
+                    <a class="nav-link" href="{% url 'expense' %}"> 
+                        <i class="fas fa-list-check"></i>
+                        <span class="nav-link-text">Tasks/Create Task</span> 
+                    </a> </li>
+                    <li class="nav-item"> 
+                        <a class="nav-link" href="{% url 'add_expense_category' %}"> 
+                            <i class="ni ni-collection"></i> 
+                            <span class="nav-link-text">Completed Tasks</span> 
+                        </a> 
+                    </li>
+                </ul> 
+                <!-- Smart over -->
+                
+                <hr class="my-3"> 
                 <h6 class="navbar-heading p-0 text-muted"> 
                     <span class="docs-normal">Expenses</span> 
                 </h6> 
@@ -17,7 +36,6 @@
                             <span class="nav-link-text">Expense</span> 
                         </a> 
                     </li>
-
                 </ul> 
                     <hr class="my-3"> 
                     <h6 class="navbar-heading p-0 text-muted"> 

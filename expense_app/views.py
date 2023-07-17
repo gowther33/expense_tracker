@@ -239,7 +239,8 @@ def add_expense(request):
                 amount=amount,
                 date=date,
                 description=description,
-                category=category_obj
+                category=category_obj,
+                created_by = request.user.username
             )
             # For saving data
             if "save_data" in request.POST:

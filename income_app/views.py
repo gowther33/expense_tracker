@@ -251,7 +251,8 @@ def add_income(request):
                     amount=amount,
                     date=date,
                     description=description,
-                    source=source_obj
+                    source=source_obj,
+                    created_by = request.user.username
                 )
                 if request.user.is_superuser:
                     messages.success(request,'Income Saved Successfully')
@@ -264,17 +265,12 @@ def add_income(request):
                 amount_due = total - received
                 # source_obj = IncomeSource.objects.get(user=request.user,source =source)
                 source_obj = IncomeSource.objects.get(source =source)
-                # income_obj = Income.objects.create(
-                #     amount=amount,
-                #     date=date,
-                #     description=description,
-                #     source=source_obj
-                # )
                 income_obj = Income(
                     amount=amount,
                     date=date,
                     description=description,
-                    source=source_obj
+                    source=source_obj,
+                    created_by = request.user.username
                 )
                 income_obj.save()
                 # Create Due

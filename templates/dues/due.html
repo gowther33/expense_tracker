@@ -94,14 +94,8 @@
                             </th>
                             <th style="font-size: small;">Source</th>
                             <th style="font-size: small;">Description</th>
-                            <!-- <th style="font-size: small;">
-                              <span class="row ml-1"> Date 
-                                <span class="col">
-
-                                </span>
-                              </span>
-                            </th> -->
                             <th style="font-size: small;">Date/Time </th>
+                            <th style="font-size: small;">Created By </th>
                             <th style="font-size: small;">Received </th>
                             <th style="font-size: small;">Action</th>
                           </tr>
@@ -113,6 +107,7 @@
                             <td>{{due.source.source.source  }}</td>
                             <td>{{due.description | truncatechars:30 }}</td>
                             <td>{{due.created_at}}</td>
+                            <td>{{due.source.created_by}}</td>
                             <td>{{due.received_at}}</td>
                             <td>
                               <div class="dropdown ms-auto">

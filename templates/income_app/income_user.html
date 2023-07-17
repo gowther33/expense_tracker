@@ -93,14 +93,8 @@
                             </th>
                             <th style="font-size: small;">Source</th>
                             <th style="font-size: small;">Description</th>
-                            <!-- <th style="font-size: small;">
-                              <span class="row ml-1"> Date 
-                                <span class="col">
-
-                                </span> 
-                              </span>
-                            </th> -->
                             <th style="font-size: small;">Date/Time </th>
+                            <th style="font-size: small;">Created By </th>
                           </tr>
                         </thead>
                         <tbody id="table-body-data">{% for income in page_incomes %}
@@ -109,6 +103,7 @@
                             <td>{{income.source.source | truncatechars:20 }}</td>
                             <td>{{income.description | truncatechars:30 }}</td>
                             <td>{{income.created_at}}</td>
+                            <td>{{income.created_by}}</td>
                           </tr>{% endfor %}
                           <!-- Added -->
                           <td>{{page_total}}</td> 

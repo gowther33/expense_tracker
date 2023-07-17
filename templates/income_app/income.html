@@ -32,14 +32,8 @@
                             </th>
                             <th style="font-size: small;">Source</th>
                             <th style="font-size: small;">Description</th>
-                            <!-- <th style="font-size: small;">
-                              <span class="row ml-1"> Date 
-                                <span class="col">
-
-                                </span>
-                              </span>
-                            </th> -->
                             <th style="font-size: small;">Date/Time </th>
+                            <th style="font-size: small;">Created By</th>
                             <th style="font-size: small;">Action</th>
                           </tr>
                         </thead>
@@ -49,6 +43,7 @@
                             <td>{{income.source.source | truncatechars:20 }}</td>
                             <td>{{income.description | truncatechars:30 }}</td>
                             <td>{{income.created_at}}</td>
+                            <td>{{income.created_by}}</td>
                             <td>
                               <a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a>
                             </td>

@@ -71,26 +71,26 @@ def _dashboard(request):
     base_url = f''
     date_from_html = ''
     date_to_html = ''
-
+    # Added
     today = datetime.datetime.now()
-    delta = today - timedelta(days=5)
+    delta = today - timedelta(days=14)
     today = today.strftime("%Y-%m-%d")
-    delta = delta.strftime("%Y-%m-%d")
+    delta = delta.strftime("%Y-%m-%d") 
 
     expenses = Expense.objects.all().order_by('-date')
     try:
 
         if 'date_from' in request.GET and request.GET['date_from'] != '':
             date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
-            
             filter_context['date_from'] = request.GET['date_from']
+
             date_from_html = request.GET['date_from']
 
             if 'date_to' in request.GET and request.GET['date_to'] != '':
 
                 date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
-
                 filter_context['date_to'] = request.GET['date_to']
+
                 date_to_html = request.GET['date_to']
                 expenses = expenses.filter(
                     Q(date__gte = date_from )
@@ -108,10 +108,10 @@ def _dashboard(request):
             date_to_html = request.GET['date_to']
             date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
             filter_context['date_from'] = request.GET['date_to']
+
             expenses = expenses.filter(
                 date__lte = date_to
             ).order_by('-date')
-        
         else:
             date_from = delta # from
             date_to = today # today

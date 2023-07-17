@@ -91,13 +91,8 @@
                             </th>
                             <th style="font-size: small;">Category</th>
                             <th style="font-size: small;">Description</th>
-                            <!-- <th style="font-size: small;">
-                              <span class="row ml-1"> Date <span class="col">
-                                
-                              </span> 
-                            </span>
-                          </th> -->
                           <th style="font-size: small;">Date/Time </th>
+                          <th style="font-size: small;">Created By </th>
                           <th style="font-size: small;">Action</th>        
                           </tr>
                         </thead>
@@ -107,6 +102,7 @@
                             <td>{{expense.category.name | truncatechars:20 }}</td>
                             <td>{{expense.description | truncatechars:30 }}</td>
                             <td>{{expense.created_at}}</td>
+                            <td>{{expense.created_by}}</td>
                             <td>
                               <div class="dropdown ms-auto">
                                 <!-- Print button -->

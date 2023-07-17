@@ -17,7 +17,6 @@ class Due(models.Model):
 	created_at = models.DateTimeField(default=localtime)
 	received_at = models.DateTimeField(null=True, blank=True)
 
-
 	def __str__(self):
 		return str(self.source) + str(self.date )+ str(self.amount)
 

@@ -21,74 +21,91 @@
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 mb-0 text-center">Expense Memo</h5>
+                  <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
                   <h5 class="h3 mb-0 text-end">Office Copy</h5>                  
-                  <form action="{% url 'edit_expense' expense.id %}" method="POST">
-                    {% csrf_token %}
+                    <!-- Form 1 -->
                     <div class="form-group">
-                        <label for="">Amount:</label>
+                        <label class="text-dark" for="">Amount:</label>
                         <input class="memo-input border-0" type = "number" name="amount" value = "{{ values.amount }}" readonly>
                         <!-- <input class="memo-input" = "number" name="amount" value = "{{ values.amount }}" readonly> -->
                     </div>
                     <div class="form-group">
-                        <label for="">Category:</label>
+                        <label class="text-dark" for="">Category:</label>
                         <input class="memo-input border-0" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Description:</label>
+                        <label class="text-dark" for="">Description:</label>
                         <input class="memo-input border-0" type = "text" name="description" value = "{{ values.description }}" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Date of Expense:</label>
+                        <label class="text-dark" for="">Date of Expense:</label>
                         <input class="memo-input border-0" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
                     </div>
                     <!-- signature-line -->
                     <div class="signature-container">
                         <div class="signature-line">
-                            <label for="paid-by">Paid by:</label>
+                            <label class ="text-dark" for="paid-by">Paid by:</label>
                             <div class="line"></div>
                         </div>
                         <div class="signature-line">
-                            <label for="received-by">Received by:</label>
+
+                            <label class ="text-dark" for="received-by">Received by:</label>
                             <div class="line"></div>
                         </div>
+                        <div>
+                            <b><label>Printed by:</label></b>
+                            Sohail Khan
+                        </div>
+                        <div>
+                            <b><label>Created by:</label></b>
+                            Anwar Daniel
+                        </div>
                     </div>
-                </form>
+                    <!-- signature-line -->
+                <!-- Form 1 -->
 
                 <!-- form 2 -->
                 
                 <hr>
-                <h5 class="h3 mb-0 text-center">Expense Memo</h5>
-                <form action="{% url 'edit_expense' expense.id %}" method="POST">
-                    {% csrf_token %}
-                    <div class="form-group"><label for="">Amount:</label>
+                <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
+
+                    <div class="form-group">
+                        <label class = "text-dark"for="">Amount:</label>
                         <input class="memo-input border-0" type = "number" name="amount" value = "{{ values.amount }}"  readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Category:</label>
+                        <label class = "text-dark"for="">Category:</label>
                         <input class="memo-input border-0" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Description:</label>
+                        <label class = "text-dark"for="">Description:</label>
                         <input class="memo-input border-0" type = "text" name="description" value = "{{ values.description }}" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="">Date of Expense:</label>
+                        <label class = "text-dark"for="">Date of Expense:</label>
                         <input class="memo-input border-0" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
                     </div>
                     <div class="signature-container">                    
                         <!-- signature-line -->
                         <div class="signature-line">
-                            <label for="paid-by">Paid by:</label>
+                            <label class="text-dark" for="paid-by">Paid by:</label>
                             <div class="line"></div>
                         </div>
                         <div class="signature-line">
-                            <label for="received-by">Received by:</label>
+                            <label class="text-dark" for="received-by">Received by:</label>
                             <div class="line"></div>
+                        </div>
+                        <div>
+                            <b><label>Printed by:</label></b>
+                            Sohail Khan
+                        </div>
+                        <div>
+                            <b><label>Created by:</label></b>
+                            Anwar Daniel
                         </div>
                         <!-- signature-line -->
                     </div>
-                </form>
+
                 <div id="no-print" class="text-center">
                     <button onclick="window.print()" type="button" class="btn btn-primary">Print</button>
                 </div>

@@ -1,9 +1,10 @@
+console.log("Fetched Count")
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
-const income_count = document.getElementById("income_count");
-let income_count_initial = income_count.innerHTML;
+const dues_count = document.getElementById("dues_count");
+let due_count_initial = dues_count.innerHTML;
 const tbody = document.querySelector("#table-body-data");
-let income_list = tbody.innerHTML;
+let due_list = tbody.innerHTML;
 const no_results = document.getElementById("no-results");
 
 searchField.addEventListener("keyup", (e) => {
@@ -19,6 +20,7 @@ const searchFunction = (e) => {
   if (searchValue.trim().length > 0) {
     paginationContainer.style.display = "none";
     tbody.innerHTML = "";
+    console.log("Items fetched");
     fetch("/due/search", {
       body: JSON.stringify({ search_query: searchValue }),
       method: "POST",
@@ -42,9 +44,9 @@ const searchFunction = (e) => {
                 <tr>
                 <td>${item.amount}</td>
                 <td>${
-                  item.source__source.length > 20
-                    ? item.source__source.substring(0, 19) + "..."
-                    : item.source__source
+                  item.source.source.source.length > 20
+                    ? item.source.source.source.substring(0, 19) + "..."
+                    : item.source.source.source
                 }</td>
                 <td>${
                   item.description.length > 30
@@ -61,8 +63,8 @@ const searchFunction = (e) => {
       });
   } else {
     paginationContainer.style.display = "block";
-    tbody.innerHTML = income_list;
-    income_count.innerHTML = income_count_initial;
+    tbody.innerHTML = due_list;
+    dues_count.innerHTML = due_count_initial;
   }
 };
 

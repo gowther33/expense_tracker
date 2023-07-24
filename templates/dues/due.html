@@ -26,6 +26,7 @@
                         </ol>
                     </nav>
                 </div>
+                <!-- Search -->
                 <div class="col-md-3 text-right ml--5 mr-5">
                     <div class="input-group input-group-alternative input-group-merge">
                         <div class="input-group-prepend">
@@ -39,9 +40,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- <div class="col-md-2 text-right ml-3 mr--3">
-                    <a href="{% url 'import_income' %}" class="btn btn btn-neutral">Import</a> 
-                </div> -->
+                <!-- Search -->
+
                 <div class="col-md-2 text-right ml--4">
                     <a href="{% url 'add_due' %}" class="btn btn btn-neutral">Create New</a>
                 </div>
@@ -186,5 +186,5 @@
   <form method="GET" id="date_down_form" action="{% url 'due_page_sort' %}">
     <input hidden name="date_sort" value="1"></input>
   </form>
-  <script src="{% static 'js/sorting.js' %}"></script>
+  <!-- <script src="{% static 'js/sorting.js' %}"></script> -->
 {% endblock %}

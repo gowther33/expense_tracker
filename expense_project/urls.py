@@ -35,6 +35,7 @@ urlpatterns = [
     path('income/',include('income_app.urls')),
     path('user/',include('user_profile.urls')),
     path('due/',include('dues.urls')),
+    path('smart-over/', include('smartover_app.urls')),
     path('admin/', admin.site.urls),
 ]
 

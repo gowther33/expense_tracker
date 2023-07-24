@@ -290,6 +290,7 @@ def expense_memo(request, id):
     context = {
         'expense':expense,
         'values': expense,
+        'printed_by':request.user.username
     }
         
     if request.method == 'GET':

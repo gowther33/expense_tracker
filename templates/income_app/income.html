@@ -8,7 +8,72 @@
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
       <div class="mr-5 ml-5"><div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div></div>
-      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-3 text-right ml--5 mr-5"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"><div class="input-group-append"><span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span></div></div></div><div class="col-md-2 text-right ml-3 mr--3"><a href="{% url 'import_income' %}" class="btn btn btn-neutral">Import</a> </div><div class="col-md-2 text-right ml--4"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a></div></div><hr class="mt--2"/><div class="row align-items-center py-4"><div class="col mt--5 ml-5"><form method="GET" class="form-inline ml-5" action="{% url 'income' %}"><div class="form-group"><span class="text-white ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span></div><div class="form-group"><span class="text-white ml-5">To: <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" /></span></div><div class="ml-5"><span class="ml-5"><button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button></span></div><button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button></form></div></div><hr class="mt--2"/></div></div>
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-5 col-6">
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'dashboard' %}">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="{% url 'income' %}">Income</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">View</li>
+                </ol>
+              </nav>
+            </div>
+            <!-- Search -->
+            <div class="col-md-3 text-right ml--5 mr-5">
+              <div class="input-group input-group-alternative input-group-merge">
+                <div class="input-group-prepend">
+                  <span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </div>
+                <input class="form-control" id ="searchField" placeholder="Search" type="text">
+                <div class="input-group-append">
+                  <span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span>
+                </div>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="col-md-2 text-right ml-3 mr--3">
+              <a href="{% url 'import_income' %}" class="btn btn btn-neutral">Import</a> 
+            </div>
+            <div class="col-md-2 text-right ml--4">
+              <a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a>
+            </div>
+          </div>
+          <hr class="mt--2"/>
+          <div class="row align-items-center py-4">
+            <div class="col mt--5 ml-5">
+              <form method="GET" class="form-inline ml-5" action="{% url 'income' %}">
+                <div class="form-group">
+                  <span class="text-white ml-5">From: 
+                    <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="text-white ml-5">To: 
+                    <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" />
+                  </span>
+                </div>
+                <div class="ml-5">
+                  <span class="ml-5">
+                    <button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button>
+                  </span>
+                </div>
+                <button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
+              </form>
+            </div>
+          </div>
+          <hr class="mt--2"/>
+        </div>
+      </div>
     </div>
     <div class="container-fluid mt--6">
       <div class="row">
@@ -49,8 +114,8 @@
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->
-                          <td>{{page_total}}</td> 
-                          <td>Page Total</td>
+                          <td style="font-size: small; color: coral;">{{page_total}}</td> 
+                          <td style="font-size: small; color:coral;">PAGE TOTAL</td>
                         </tbody>
                       </table>
                     </div>

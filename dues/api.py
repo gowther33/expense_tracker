@@ -2,9 +2,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 from django.http import JsonResponse
 from datetime import timedelta
-from income_app.models import IncomeSource
 from .models import Due
-
 import json
 from django.db.models import Q
 
@@ -27,8 +25,8 @@ def search_due(request):
             Q(description__icontains = query) | 
             Q(source__source__icontains = query)
         )
-        
-        filtered_results = dues.values('id','amount','description','source__source','date')
+        print("ITEMS FETCHED")
+        filtered_results = dues.values('id','amount','description','source','date')
 		
         return JsonResponse(
             list(filtered_results)

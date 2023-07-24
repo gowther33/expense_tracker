@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'user_profile',
     'income_app',
     'dues',
+    'smartover_app',
     'django_user_agents',
 ]
 

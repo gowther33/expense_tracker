@@ -42,21 +42,23 @@
                 </div>
                 <!-- Search -->
 
-                <div class="col-md-2 text-right ml--4">
-                    <a href="{% url 'add_due' %}" class="btn btn btn-neutral">Create New</a>
-                </div>
+                  <!-- <div class="col-md-2 text-right ml--4">
+                      <a href="{% url 'add_due' %}" class="btn btn btn-neutral">Create New</a>
+                  </div> -->
             </div>
             <hr class="mt--2"/>
             <div class="row align-items-center py-4">
                 <div class="col mt--5 ml-5">
                     <form method="GET" class="form-inline ml-5" action="{% url 'due' %}">
                         <div class="form-group">
-                            <span class="text-white ml-5">From: 
+                            <span class="text-white ml-5">
+                              From: 
                                 <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
                             </span>
                         </div>
                         <div class="form-group">
-                            <span class="text-white ml-5">To: 
+                            <span class="text-white ml-5">
+                              To: 
                                 <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" />
                             </span>
                         </div>
@@ -134,8 +136,8 @@
                           </tr>
                           {% endfor %}
                           <!-- Added -->
-                          <td>{{page_total}}</td> 
-                          <td>Page Total</td>
+                          <td style="font-size: large; color: greenyellow;">{{page_total}}</td> 
+                          <td style="font-size: large; color:greenyellow;">Page Total</td>
                         </tbody>
                       </table>
                     </div>
@@ -173,7 +175,94 @@
       </div>
     </div>
   </div>
-  <script src="{% static 'js/dues_search.js' %}"></script>
+
+  <!-- Searching -->
+  <script>
+
+    const searchField = document.querySelector("#searchField");
+    const paginationContainer = document.querySelector(".pagination-container");
+    const dues_count = document.getElementById("dues_count");
+    let due_count_initial = dues_count.innerHTML;
+    const tbody = document.querySelector("#table-body-data");
+    let due_list = tbody.innerHTML;
+    const no_results = document.getElementById("no-results");
+
+    searchField.addEventListener("keyup", (e) => {
+      const delay = setTimeout(() => {
+        searchFunction(e);
+      }, 500);
+      return () => clearTimeout(delay);
+    });
+
+    const searchFunction = (e) => {
+      const searchValue = e.target.value;
+      no_results.style.display = "none";
+      if (searchValue.trim().length > 0) {
+        paginationContainer.style.display = "none";
+        tbody.innerHTML = "";
+        console.log("Items fetched");
+        fetch("/due/search", {
+          body: JSON.stringify({ search_query: searchValue }),
+          method: "POST",
+          credentials: "same-origin",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            dues_count.innerHTML = data.length;
+            if (data.length === 0) {
+              no_results.style.display = "block";
+            } else {
+              no_results.style.display = "none";
+              tbody.innerHTML = "";
+              data.forEach((item) => {
+                tbody.innerHTML += `
+                    <tr>
+                    <td>${item.amount}</td>
+                    <td>${item.source}</td>
+                    <td>${
+                      item.description.length > 30
+                        ? item.description.substring(0, 29) + "..."
+                        : item.description
+                    }</td>
+                    <td>${item.created_at}</td>
+                    <td>${item.created_by}</td>
+                    <td>${item.received_at}</td>
+                    <td><a href="/dues/edit-due/${
+                      item.id
+                    }" class="btn btn-warning btn-sm">Edit</a></td>
+                    </tr>`;
+              });
+            }
+          });
+      } else {
+        paginationContainer.style.display = "block";
+        tbody.innerHTML = due_list;
+        dues_count.innerHTML = due_count_initial;
+      }
+    };
+
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + "=") {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+  </script>
+
   <form method="GET" id="amount_up_form" action="{% url 'due_page_sort' %}">
     <input hidden name="amount_sort" value="2"></input>
   </form>

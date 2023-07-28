@@ -1,8 +1,8 @@
-console.log("Fetched Count")
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
 const dues_count = document.getElementById("dues_count");
-let due_count_initial = dues_count.innerHTML;
+// let due_count_initial = dues_count.innerHTML;
+let due_count_initial = 4;
 const tbody = document.querySelector("#table-body-data");
 let due_list = tbody.innerHTML;
 const no_results = document.getElementById("no-results");
@@ -44,9 +44,9 @@ const searchFunction = (e) => {
                 <tr>
                 <td>${item.amount}</td>
                 <td>${
-                  item.source.source.source.length > 20
-                    ? item.source.source.source.substring(0, 19) + "..."
-                    : item.source.source.source
+                  item.source__source__source.length > 20
+                    ? item.source__source__source.substring(0, 19) + "..."
+                    : item.source__source__source
                 }</td>
                 <td>${
                   item.description.length > 30

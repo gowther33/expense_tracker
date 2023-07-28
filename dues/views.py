@@ -15,7 +15,6 @@ from .utils import queryset_filter
 import csv
 import pandas as pd
 import datetime
-from .utils import income_send_success_mail,income_send_error_mail
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
 from datetime import datetime as datetime_custom, timedelta
@@ -366,27 +365,29 @@ def due_received(request,id):
 def download_as_excel(request,filter_by):
     filter_by = str(filter_by)
     response = HttpResponse(content_type = 'application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + '-' + str(localtime())+".xls"
+    response['Content-Disposition'] = 'attachment; filename=Dues-'+ str(request.user.username) + '-' + str(localtime())+".xls"
     
     wb = xlwt.Workbook(encoding='utf-8')
-    ws = wb.add_sheet('Incomes')
+    ws = wb.add_sheet('Dues')
     
     if filter_by != '':
-        ws.write(0,0,f"Incomes in {filter_by.lower().capitalize()}")
+        ws.write(0,0,f"Dues in {filter_by.lower().capitalize()}")
     else:
-        ws.write(0,0,f"Incomes in Year")
+        ws.write(0,0,f"Dues in Year")
     
     row_number = 1
     fontStyle = xlwt.XFStyle()
     fontStyle.font.bold = True
-    columns = ['Date','Source','Description','Amount']
+    columns = ['Date','Source','Description','Amount','Created_By','Received_At']
     
     for col_num in range(len(columns)):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
     fontStyle = xlwt.XFStyle()
     
     dues = queryset_filter(filter_by).order_by('date')
-    rows = dues.values_list('date','source__source','description','amount')
+    print("Fetched")
+    rows = dues.values_list('date','source__source__source','description','amount','source__created_by','received_at')
+    
     for row in rows:
         row_number += 1
         for col_num in range(len(row)):
@@ -405,11 +406,12 @@ def download_as_csv(request,filter_by):
     response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + '-' + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
-    writer.writerow(['Date','Source','Description','Amount'])
+    writer.writerow( ['Date','Source','Description','Amount','Created_By','Received_At'])
+    
     
     dues = queryset_filter(filter_by).order_by('date')
     for due in dues:
-        writer.writerow([due.date,due.source.source,due.description,due.amount])
+        writer.writerow([due.date,due.source.source.source,due.description,due.amount,due.source.created_by,due.received_at])
     
     writer.writerow(['','','',''])
     writer.writerow(['TOTAL','','',str(dues.aggregate(Sum('amount'))['amount__sum'])])
@@ -449,7 +451,7 @@ def due_page_sort(request):
     currency = 'PKR - Pakistani Rupee'
 
 
-    return render(request,'income_app/income.html',{
+    return render(request,'dues/due.html',{
         'currency':currency,
         'page_dues':page_dues,
         'dues':dues,

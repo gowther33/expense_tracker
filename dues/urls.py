@@ -18,7 +18,7 @@ urlpatterns = [
     
     path('download-excel/<str:filter_by>',views.download_as_excel,name = 'due_download_as_excel'),
     path('download-csv/<str:filter_by>',views.download_as_csv,name = 'due_download_as_csv'),
-    path('search',api.search_due,name="due_search"),
     
+    path('search',api.search_due,name="due_search"),
 
 ]

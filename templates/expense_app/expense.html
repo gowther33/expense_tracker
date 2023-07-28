@@ -126,10 +126,11 @@
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->
-                          <td style="font-size: small; color: coral;">{{page_total}}</td> 
-                          <td style="font-size: small; color:coral;">PAGE TOTAL</td>
+                          <td style="font-size: large; color:greenyellow;">{{page_total}}</td> 
+                          <td style="font-size: large; color:greenyellow;">Page Total</td>
                         </tbody>
                       </table>
+
                     </div>
                   {% else %}<h5 class="h3 text-white mb-0 text-center">No expenses. Create <a href="{% url 'add_expense' %}">one</a></h5>{% endif %}
                   <h5 style="display: none;" id="no-results" class="h3 text-danger mt-5 mb-0 text-center">No expenses found for searched item.</h5>

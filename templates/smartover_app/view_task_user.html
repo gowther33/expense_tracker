@@ -47,7 +47,18 @@
                     </div>
                     <div class="form-group">
                         <label for="">Priority</label>
-                        <input class="form-control form-control-sm" type = "text" name="priority" value = "{{ values.priority }}" readonly >
+                        {% if values.priority == 1 %}
+                        <input class="form-control form-control-sm" type = "text" name="priority" value = "Low" readonly >
+                        {% endif %}
+                        {% if values.priority == 2 %}
+                        <input class="form-control form-control-sm" type = "text" name="priority" value = "Medium" readonly >
+                        {% endif %}
+                        {% if values.priority == 3 %}
+                        <input class="form-control form-control-sm" type = "text" name="priority" value = "High" readonly >
+                        {% endif %}
+                        {% if values.priority == 4 %}
+                        <input class="form-control form-control-sm" type = "text" name="priority" value = "Critical" readonly >
+                        {% endif %}
                     </div>
                     <div class="form-group">
                       <label for="">Remarks</label>

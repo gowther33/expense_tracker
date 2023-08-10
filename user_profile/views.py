@@ -9,7 +9,7 @@ from django.contrib.auth import update_session_auth_hash
 
 @login_required(login_url = 'login')
 def profile_admin(request,new_context={}):
-    currency_data = load_currency_data()
+    # currency_data = load_currency_data()
     form = PasswordChangeForm(request.user)
     user = User.objects.get(username = request.user.username)
     
@@ -22,8 +22,6 @@ def profile_admin(request,new_context={}):
                 'first_name':user.first_name,
                 'last_name':user.last_name,
                 'profile_pic':user_profile_obj.profile_pic,
-                'currency_data':currency_data,
-                'selected_currency':user_profile_obj.currency,
                 'form':form,
                 'user_profile':user_profile_obj
             }
@@ -34,8 +32,6 @@ def profile_admin(request,new_context={}):
             context = {
                 'first_name':user.first_name,
                 'last_name':user.last_name,
-                'currency_data':currency_data,
-                'selected_currency':'PKR - Pakistani Rupee',
                 'form':form
             }
             context.update(new_context)
@@ -70,7 +66,7 @@ def profile_admin(request,new_context={}):
 
 @login_required(login_url = 'login')
 def profile_user(request,new_context={}):
-    currency_data = load_currency_data()
+    # currency_data = load_currency_data()
     form = PasswordChangeForm(request.user)
     user = User.objects.get(username = request.user.username)
     
@@ -83,8 +79,6 @@ def profile_user(request,new_context={}):
                 'first_name':user.first_name,
                 'last_name':user.last_name,
                 'profile_pic':user_profile_obj.profile_pic,
-                'currency_data':currency_data,
-                'selected_currency':user_profile_obj.currency,
                 'form':form,
                 'user_profile':user_profile_obj
             }
@@ -95,8 +89,6 @@ def profile_user(request,new_context={}):
             context = {
                 'first_name':user.first_name,
                 'last_name':user.last_name,
-                'currency_data':currency_data,
-                'selected_currency':'PKR - Pakistani Rupee',
                 'form':form
             }
             context.update(new_context)
@@ -130,30 +122,6 @@ def profile_user(request,new_context={}):
         return redirect('user_profile')
 
 
-@login_required(login_url = 'login')
-def save_currency(request):
-    user = User.objects.get(username = request.user.username)
-    user_profile = UserProfile.objects.filter(user=user).exists()
-    user_profile_obj = None
-    
-    if user_profile:
-        user_profile_obj = UserProfile.objects.get(user=user)
-    
-    if request.method == 'POST':
-        currency = request.POST.get('currency')
-        
-        if user_profile:
-            user_profile_obj.currency = currency
-            user_profile_obj.save()
-        
-        else:
-            UserProfile.objects.create(user = request.user,currency = currency )
-        
-        messages.success(request,"Currency saved")
-        return redirect('user_profile')
-    else:
-        return redirect('user_profile')
-
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -162,24 +130,44 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             
-            messages.success(request, 'Your password was successfully updated')
-            return redirect('user_profile')
+            if request.user.is_superuser:
+                messages.success(request, 'Your password was successfully updated')
+                return redirect('admin_profile')
+            else:
+                messages.success(request, 'Your password was successfully updated')
+                return redirect('user_profile')
         else:
-            messages.error(request, 'Please correct the error below.')
-            request.method = 'GET'
-            response = profile(request,{'forms_errors':list(form.errors.values())})
-            return response
+            if request.user.is_superuser:
+                messages.error(request, 'Please correct the error below.')
+                request.method = 'GET'
+                response = profile_admin(request,{'forms_errors':list(form.errors.values())})
+                return response
+            else:
+                messages.error(request, 'Please correct the error below.')
+                request.method = 'GET'
+                response = profile_user(request,{'forms_errors':list(form.errors.values())})
+                return response
+
 
 @login_required(login_url = 'login')
 def change_email_pref(request):
     user = User.objects.get(username = request.user.username)
+
     user_profile = UserProfile.objects.get(user=user)
-    
+
+
     if request.method == 'POST':
         user_profile.email_preference = not user_profile.email_preference
         user_profile.save()
         
-        messages.success(request,"Email preference updated")
-        return redirect('user_profile')
+        if request.user.is_superuser:
+            messages.success(request,"Email preference updated")
+            return redirect('admin_profile')
+        else:
+            messages.success(request,"Email preference updated")
+            return redirect('user_profile')
     else:
-        return redirect('user_profile')
+        if request.user.is_superuser:
+            return redirect('admin_profile')
+        else:
+            return redirect('user_profile')

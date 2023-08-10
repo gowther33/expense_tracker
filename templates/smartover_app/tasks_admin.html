@@ -71,13 +71,13 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if tasks %}
-                    <h5 class="h3 text-white mb-0 text-center">My Tasks - <span id="expense_count">{{ tasks.count }}</span></h5>
+                    <h5 class="h3 text-white mb-0 text-center">My Tasks - <span id="task_count">{{ tasks.count }}</span></h5>
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead>
                           <tr>
-                          <th style="font-size: small;">Created By</th>
-                          <th style="font-size: small;">Task</th>
+                            <th style="font-size: small;">Task</th>
+                            <th style="font-size: small;">Created By</th>
                           <th style="font-size: small;">Priority</th>
                           <th style="font-size: small;">Created_at </th>
                           <th style="font-size: small;">Action</th>        
@@ -86,9 +86,21 @@
                         <tbody id="table-body-data" >
                           {% for task in page_tasks %}
                           <tr>
-                            <td>{{task.created_by.username}}</td>
                             <td>{{task.description | truncatechars:30 }}</td>
-                            <td>{{task.priority}}</td>
+                            <td>{{task.created_by.username}}</td>
+                            
+                            {% if task.priority == 1 %}
+                            <td>Low</td>
+                            {% endif %}
+                            {% if task.priority == 2 %}
+                            <td>Medium</td>
+                            {% endif %}
+                            {% if task.priority == 3 %}
+                            <td>High</td>
+                            {% endif %}
+                            {% if task.priority == 4 %}
+                            <td>Critical</td>
+                            {% endif %}
                             <td>{{task.date}}</td>
                             <td>
                               <div class="dropdown ms-auto">
@@ -154,7 +166,7 @@
       </div>
     </div>
   </div>
-  <script src="{% static 'js/expense_search.js' %}"></script>
+  <!-- <script src="{% static 'js/task_search.js' %}"></script> -->
   <form method="GET" id="amount_up_form" action="{% url 'expense_page_sort' %}">
     <input hidden name="amount_sort" value="2"></input>
   </form>

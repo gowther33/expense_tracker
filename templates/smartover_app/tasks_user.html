@@ -83,13 +83,13 @@
                         <thead>
                           <tr>
                             <th style="font-size: small;">
-                              <span class="row">Created By 
+                              <span class="row">Task 
                                 <span class="col">
 
                                 </span> 
                               </span>
                             </th>
-                            <th style="font-size: small;">Task</th>
+                            <th style="font-size: small;">Created By</th>
                             <th style="font-size: small;">Priority</th>
                           <th style="font-size: small;">Created_at </th>
                           <th style="font-size: small;">Action</th>        
@@ -100,7 +100,20 @@
                           <tr>
                             <td>{{task.description | truncatechars:30 }}</td>
                             <td>{{task.created_by.username}}</td>
-                            <td>{{task.priority}}</td>
+                            
+                            {% if task.priority == 1 %}
+                            <td>Low</td>
+                            {% endif %}
+                            {% if task.priority == 2 %}
+                            <td>Medium</td>
+                            {% endif %}
+                            {% if task.priority == 3 %}
+                            <td>High</td>
+                            {% endif %}
+                            {% if task.priority == 4 %}
+                            <td>Critical</td>
+                            {% endif %}
+                            
                             <td>{{task.date}}</td>
                             <td>
                               <div class="dropdown ms-auto">

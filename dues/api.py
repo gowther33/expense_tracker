@@ -33,7 +33,9 @@ def search_due(request):
         
         print(f"Type: {type(dues)}")
         for x in dues:
-            dic = {'amount':x.amount, 'description':x.description, 
+            dic = {'id':x.id,
+                   'amount':x.amount, 
+                   'description':x.description, 
                    'source':x.source.source.source, 
                    'created_at':x.created_at, 
                    'created_by':x.source.created_by,

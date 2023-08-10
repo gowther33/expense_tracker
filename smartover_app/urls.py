@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.views.generic import TemplateView
+from . import api
 
 urlpatterns = [
     path('view/',views.tasks_page,name="tasks_page"),
@@ -16,5 +17,6 @@ urlpatterns = [
 
     path('delete-task/<int:id>/', views.delete_task, name= "delete_task"),
 
+    path('search',api.search_task,name="task_search"),
     
 ]

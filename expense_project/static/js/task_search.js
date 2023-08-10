@@ -1,9 +1,9 @@
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
-const income_count = document.getElementById("income_count");
-let income_count_initial = income_count.innerHTML;
+const task_count = document.getElementById("task_count");
+let task_count_initial = task_count.innerHTML;
 const tbody = document.querySelector("#table-body-data");
-let income_list = tbody.innerHTML;
+let task_list = tbody.innerHTML;
 const no_results = document.getElementById("no-results");
 
 searchField.addEventListener("keyup", (e) => {
@@ -19,7 +19,7 @@ const searchFunction = (e) => {
   if (searchValue.trim().length > 0) {
     paginationContainer.style.display = "none";
     tbody.innerHTML = "";
-    fetch("/income/search", {
+    fetch("/smart-over/search", {
       body: JSON.stringify({ search_query: searchValue }),
       method: "POST",
       credentials: "same-origin",
@@ -31,7 +31,7 @@ const searchFunction = (e) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        income_count.innerHTML = data.length;
+        task_count.innerHTML = data.length;
         if (data.length === 0) {
           no_results.style.display = "block";
         } else {
@@ -40,30 +40,44 @@ const searchFunction = (e) => {
           data.forEach((item) => {
             tbody.innerHTML += `
                 <tr>
-                <td>${item.amount}</td>
-                <td>${
-                  item.source__source.length > 20
-                    ? item.source__source.substring(0, 19) + "..."
-                    : item.source__source
-                }</td>
                 <td>${
                   item.description.length > 30
                     ? item.description.substring(0, 29) + "..."
                     : item.description
                 }</td>
-                <td>${item.date}</td>
-                <td>${item.created_by}</td>
-                <td><a href="/income/edit-income/${
-                  item.id
-                }" class="btn btn-warning btn-sm">Edit</a></td>
+                <td>${
+                  item.created_by__username.length}</td>
+                  <td>${item.priority}</td>
+                  <td>${item.date}</td>
+                  <td>
+                  <div class="dropdown ms-auto">
+                  <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="/smart-over/view-task/${item.id}" >
+                        <span class="dropdown-item">
+                          <i class="fas fa-pen mx-2"></i> View
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/smart-over/close-task/${item.id}">                                      
+                        <span class="dropdown-item">
+                            <i class="fas fa-print mx-2"></i> Close Task
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                </td>
                 </tr>`;
           });
         }
       });
   } else {
     paginationContainer.style.display = "block";
-    tbody.innerHTML = income_list;
-    income_count.innerHTML = income_count_initial;
+    tbody.innerHTML = task_list;
+    task_count.innerHTML = task_count_initial;
   }
 };
 

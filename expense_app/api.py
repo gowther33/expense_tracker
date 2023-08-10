@@ -80,7 +80,7 @@ def search_expense(request):
             Q(category__name__icontains = query)
         )
 
-        filtered_results = expenses.values('id','amount','description','category__name','date')
+        filtered_results = expenses.values('id','amount','description','category__name','date', 'created_by')
 		
         return JsonResponse(
             list(filtered_results)

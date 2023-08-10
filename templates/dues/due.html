@@ -136,8 +136,8 @@
                           </tr>
                           {% endfor %}
                           <!-- Added -->
-                          <td style="font-size: large; color: greenyellow;">{{page_total}}</td> 
-                          <td style="font-size: large; color:greenyellow;">Page Total</td>
+                          <td class="page-total-style">{{page_total}}</td> 
+                          <td class="page-total-style">Page Total</td>
                         </tbody>
                       </table>
                     </div>
@@ -232,9 +232,29 @@
                     <td>${item.created_at}</td>
                     <td>${item.created_by}</td>
                     <td>${item.received_at}</td>
-                    <td><a href="/dues/edit-due/${
-                      item.id
-                    }" class="btn btn-warning btn-sm">Edit</a></td>
+                    <td>
+
+                    <div class="dropdown ms-auto">
+                    <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <a href="/due/edit-due/${item.id}" >
+                          <span class="dropdown-item">
+                            <i class="fas fa-pen mx-2"></i> Edit
+                          </span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/due/due-received/${item.id}">                                      
+                          <span class="dropdown-item">
+                              <i class="fas fa-print mx-2"></i> Received
+                          </span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+
+                    </td>
                     </tr>`;
               });
             }

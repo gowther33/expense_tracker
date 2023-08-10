@@ -2,6 +2,7 @@ function clearFilters() {
   document.getElementById("date_from").value = "";
   document.getElementById("date_to").value = "";
 }
+
 amount_up = document.getElementById("amount_up");
 amount_down = document.getElementById("amount_down");
 date_up = document.getElementById("date_up");

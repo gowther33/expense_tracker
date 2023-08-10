@@ -30,7 +30,7 @@ def tasks_page(request):
     date_to_html = ''
 
     # Select open tasks
-    tasks = Task.objects.all().order_by('-date').filter(status="Open")
+    tasks = Task.objects.all().order_by('-date').filter(status="Open").order_by("-priority")
 
     try:
 
@@ -103,7 +103,7 @@ def closed_task_page(request):
     date_to_html = ''
 
   
-    tasks = Task.objects.all().order_by('-date').filter(status="Closed")
+    tasks = Task.objects.all().order_by('-date').filter(status="Closed").order_by("-priority")
 
     try:
 
@@ -197,8 +197,17 @@ def create_task(request):
                 messages.error(request,'Description cannot be empty')
                 return render(request,'smartover_app/tasks_user.html',context)
 
-        if priority == '':            
-            priority = "Low"
+        if priority != '':
+            if priority == "Low":
+                priority = 1
+            elif priority == "Medium":
+                priority = 2
+            elif priority == "High":
+                priority = 3
+            else:
+                priority = 4
+        else:
+            priority = 1
 
 
         # Save task

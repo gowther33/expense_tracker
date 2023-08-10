@@ -137,14 +137,6 @@ def due_page_user(request):
             dues = dues.filter(
                 date__lte = date_to
             ).order_by('-date')
-        else:
-            date_from = delta # from
-            date_to = today # today
-            dues = dues.filter(
-                Q(date__gte = date_from )
-                &
-                Q(date__lte = date_to)
-            ).order_by('-date')
         
     except:
         messages.error(request,'Something went wrong')
@@ -267,12 +259,12 @@ def edit_due(request,id):
 
         # sources = IncomeSource.objects.filter(user=request.user).exclude(id=income.source.id)
         # sources = IncomeSource.objects.all().exclude(id=due.source.id)
-        source = Income.objects.get(id = due.source.id)
-
+        due_source = Income.objects.get(id = due.source.id)
+        curr_amount = due.amount
         context = {
             'due':due,
             'values': due,
-            'source':source
+            'source':due_source
         }
         
         if request.method == 'GET':
@@ -300,6 +292,13 @@ def edit_due(request,id):
             if date == '':
                 date = localtime()
 
+            # Adjust Amounts
+            update_amount = curr_amount - amount
+            # Add update amount in source amount
+            due_source.amount += update_amount
+            due_source.save()
+            
+            # Update due
             due.amount = amount
             due.date = date
             due.description = description

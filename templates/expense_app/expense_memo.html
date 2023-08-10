@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title_main %}Expense Memo{% endblock %}
 {% block body_main %}
-
+{% load static %}
     <div class="main-content bg-primary" id="panel">
 
     <div class="header bg-primary pb-6">
@@ -15,100 +15,101 @@
         </div>
     </div>
     <div class="container-fluid mt--6">
-      <div class="row">
-        <div class="col mr-5 ml-5">
-          <div class="card">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">  
-                <div class="col">
-                  <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
-                  <h5 class="h3 mb-0 text-end">Office Copy</h5>                  
-                    <!-- Form 1 -->
-                    <div class="form-group">
-                        <label class="text-dark" for="">Amount:</label>
-                        <input class="memo-input border-0" type = "number" name="amount" value = "{{ values.amount }}" readonly>
-                        <!-- <input class="memo-input" = "number" name="amount" value = "{{ values.amount }}" readonly> -->
-                    </div>
-                    <div class="form-group">
-                        <label class="text-dark" for="">Category:</label>
-                        <input class="memo-input border-0" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-dark" for="">Description:</label>
-                        <input class="memo-input border-0" type = "text" name="description" value = "{{ values.description }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-dark" for="">Date of Expense:</label>
-                        <input class="memo-input border-0" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
-                    </div>
-                    <!-- signature-line -->
-                    <div class="signature-container">
-                        <div class="signature-line">
-                            <label class ="text-dark" for="paid-by">Paid by:</label>
-                            <div class="line"></div>
-                        </div>
-                        <div class="signature-line">
+        <div class="row">
+            <div class="col mr-5 ml-5">
+                <div class="card">
+                    <div class="card-header bg-transparent">
+                        <div class="row align-items-center">  
+                            <div class="col">
+                                <div>
+                                    <img id="lab-logo" src="{% static 'img/header.jpg' %}" alt="Logo">
+                                </div>
+                                <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
+                                <h5 class="h3 mb-0 text-end">Office Copy</h5>            
+                                <br>      
+                                    <!-- Form 1 -->
+                                    <table class="table table-bordered">
+                                        <tr id="memo-table-head1">
+                                            <th>Amount</th>
+                                            <th>Category</th>
+                                            <th>Description</th>
+                                            <th>Date of Expense</th>
+                                        </tr>
+                                        <tr id="memo-table-values1">
+                                            <td>{{values.amount}}</td>
+                                            <td>{{values.category.name}}</td>
+                                            <td>{{values.description}}</td>
+                                            <td>{{values.date}}</td>
+                                        </tr>
+                                    </table>
+                                    <!-- signature-line -->
+                                    <div class="signature-container">
+                                        <div class="signature-line">
+                                            <label class ="text-dark" for="paid-by">Paid by:</label>
+                                            <div class="line"></div>
+                                        </div>
+                                        <div class="signature-line">
 
-                            <label class ="text-dark" for="received-by">Received by:</label>
-                            <div class="line"></div>
-                        </div>
-                        <div>
-                            <b><label>Printed by:</label></b>
-                            Sohail Khan
-                        </div>
-                        <div>
-                            <b><label>Created by:</label></b>
-                            Anwar Daniel
-                        </div>
-                    </div>
-                    <!-- signature-line -->
-                <!-- Form 1 -->
+                                            <label class ="text-dark" for="received-by">Received by:</label>
+                                            <div class="line"></div>
+                                        </div>
+                                        <div>
+                                            <b><label>Printed by:</label></b>
+                                            {{printed_by}}
+                                        </div>
+                                        <div>
+                                            <b><label>Created by:</label></b>
+                                            {{values.created_by}}
+                                        </div>
+                                    </div>
+                                    <!-- signature-line -->
+                                <!-- Form 1 -->
 
-                <!-- form 2 -->
-                
-                <hr>
-                <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
+                                <!-- form 2 -->
+                                
+                                <hr>
+                                <h5 class="h3 mb-0 text-center">Cash Payment Voucher</h5>
+                                <br>
+                                <table id="memo-table2" class="table table-bordered">
+                                    <tr id="memo-table-head2">
+                                        <th>Amount</th>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Date of Expense</th>
+                                    </tr>
+                                    <tr id="memo-table-values2">
+                                        <td>{{values.amount}}</td>
+                                        <td>{{values.category.name}}</td>
+                                        <td>{{values.description}}</td>
+                                        <td>{{values.date}}</td>
+                                    </tr>
+                                </table>
 
-                    <div class="form-group">
-                        <label class = "text-dark"for="">Amount:</label>
-                        <input class="memo-input border-0" type = "number" name="amount" value = "{{ values.amount }}"  readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class = "text-dark"for="">Category:</label>
-                        <input class="memo-input border-0" type = "text" name="category" value = "{{ values.category.name }}"  readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class = "text-dark"for="">Description:</label>
-                        <input class="memo-input border-0" type = "text" name="description" value = "{{ values.description }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label class = "text-dark"for="">Date of Expense:</label>
-                        <input class="memo-input border-0" value="{{values.date |date:'Y-m-d' }}" type = "date" name="expense_date" readonly>
-                    </div>
-                    <div class="signature-container">                    
-                        <!-- signature-line -->
-                        <div class="signature-line">
-                            <label class="text-dark" for="paid-by">Paid by:</label>
-                            <div class="line"></div>
-                        </div>
-                        <div class="signature-line">
-                            <label class="text-dark" for="received-by">Received by:</label>
-                            <div class="line"></div>
-                        </div>
-                        <div>
-                            <b><label>Printed by:</label></b>
-                            Sohail Khan
-                        </div>
-                        <div>
-                            <b><label>Created by:</label></b>
-                            Anwar Daniel
-                        </div>
-                        <!-- signature-line -->
-                    </div>
 
-                <div id="no-print" class="text-center">
-                    <button onclick="window.print()" type="button" class="btn btn-primary">Print</button>
-                </div>
+                                <div class="signature-container">                    
+                                    <!-- signature-line -->
+                                    <div class="signature-line">
+                                        <label class="text-dark" for="paid-by">Paid by:</label>
+                                        <div class="line"></div>
+                                    </div>
+                                    <div class="signature-line">
+                                        <label class="text-dark" for="received-by">Received by:</label>
+                                        <div class="line"></div>
+                                    </div>
+                                    <div>
+                                        <b><label>Printed by:</label></b>
+                                        {{printed_by}}
+                                    </div>
+                                    <div>
+                                        <b><label>Created by:</label></b>
+                                        {{values.created_by}}
+                                    </div>
+                                    <!-- signature-line -->
+                                </div>
+
+                                <div id="no-print" class="text-center">
+                                    <button onclick="window.print()" type="button" class="btn btn-primary">Print</button>
+                                </div>
                 </div>
               </div>
             </div>
@@ -118,3 +119,5 @@
     </div>
   </div>
 {% endblock %}
+
+

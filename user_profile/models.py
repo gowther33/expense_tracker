@@ -7,7 +7,6 @@ def user_path(instance, filename):
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(to = User,on_delete = models.CASCADE)
-	currency = models.CharField(max_length = 255,default='PKR - Pakistani Rupee')
 	profile_pic = models.ImageField(blank=True,upload_to=user_path)
 	email_preference = models.BooleanField(default=True)
 	created_at = models.DateTimeField(default=localtime)

@@ -52,10 +52,29 @@ const searchFunction = (e) => {
                     : item.description
                 }</td>
                 <td>${item.date}</td>
-                <td><a href="/expense/edit-expense/${
-                  item.id
-                }" class="btn btn-warning btn-sm">Edit</a></td>
-                </tr>`;
+                <td>${item.created_by}</td>
+                <td>
+                <div class="dropdown ms-auto">
+                <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="/expense/edit-expense/${item.id}" >
+                      <span class="dropdown-item">
+                        <i class="fas fa-pen mx-2"></i> Edit
+                      </span>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="/expense/expense-memo/${item.id}" target="_blank">                                      
+                      <span class="dropdown-item">
+                          <i class="fas fa-print mx-2"></i> Print
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              </td>
+              </tr>`;
           });
         }
       });

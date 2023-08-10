@@ -79,7 +79,7 @@ def search_income(request):
             Q(description__icontains = query) | 
             Q(source__source__icontains = query)
         )
-        filtered_results = incomes.values('id','amount','description','source__source','date')
+        filtered_results = incomes.values('id','amount','description','source__source','date', 'created_by')
 		
         return JsonResponse(
             list(filtered_results)

@@ -91,7 +91,18 @@
                           <tr>
                             <td>{{task.created_by.username}}</td>
                             <td>{{task.description | truncatechars:30 }}</td>
-                            <td>{{task.priority}}</td>
+                            {% if task.priority == 1 %}
+                            <td>Low</td>
+                            {% endif %}
+                            {% if task.priority == 2 %}
+                            <td>Medium</td>
+                            {% endif %}
+                            {% if task.priority == 3 %}
+                            <td>High</td>
+                            {% endif %}
+                            {% if task.priority == 4 %}
+                            <td>Critical</td>
+                            {% endif %}
                             <td>{{task.date}}</td>
                             <td>{{task.closing_date}}</td>
                             <td>{{task.closed_by.username}}</td>

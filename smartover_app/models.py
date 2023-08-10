@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+"""
+1 = LOW
+2 = MEDIUM
+3 = HIGH
+4 = CRITICAL
+"""
 
 
 class Task(models.Model):
@@ -15,7 +21,7 @@ class Task(models.Model):
 	# Null initially
 	closed_by = models.ForeignKey(to=User, on_delete=models.DO_NOTHING, related_name="task_closer", null=True, blank=True)
 	remarks = models.TextField()
-	priority = models.CharField(max_length=100, default='Low')
+	priority = models.PositiveIntegerField(default=1)
 	status = models.CharField(max_length=100, default="Open")
 
 

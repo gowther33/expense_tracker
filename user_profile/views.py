@@ -152,22 +152,33 @@ def change_password(request):
 @login_required(login_url = 'login')
 def change_email_pref(request):
     user = User.objects.get(username = request.user.username)
-
-    user_profile = UserProfile.objects.get(user=user)
+    user_profile = UserProfile.objects.get(id = user.pk)
 
 
     if request.method == 'POST':
         user_profile.email_preference = not user_profile.email_preference
         user_profile.save()
         
-        if request.user.is_superuser:
-            messages.success(request,"Email preference updated")
-            return redirect('admin_profile')
-        else:
-            messages.success(request,"Email preference updated")
-            return redirect('user_profile')
+        messages.success(request,"Email preference updated")
+        return redirect('admin_profile')
     else:
-        if request.user.is_superuser:
-            return redirect('admin_profile')
-        else:
-            return redirect('user_profile')
+
+        return redirect('admin_profile')
+
+
+@login_required(login_url = 'login')
+def change_email_pref_user(request):
+    user = User.objects.get(username = request.user.username)
+    print("User Found")
+    user_profile = UserProfile.objects.get(user = user)
+
+
+    if request.method == 'POST':
+        user_profile.email_preference = not user_profile.email_preference
+        user_profile.save()
+        
+
+        messages.success(request,"Email preference updated")
+        return redirect('user_profile')
+    else:
+        return redirect('user_profile')

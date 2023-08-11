@@ -42,9 +42,6 @@
                 </div>
                 <!-- Search -->
 
-                  <!-- <div class="col-md-2 text-right ml--4">
-                      <a href="{% url 'add_due' %}" class="btn btn btn-neutral">Create New</a>
-                  </div> -->
             </div>
             <hr class="mt--2"/>
             <div class="row align-items-center py-4">
@@ -111,6 +108,22 @@
                             <td>{{due.created_at}}</td>
                             <td>{{due.source.created_by}}</td>
                             <td>{{due.received_at}}</td>
+                            {% if due.received_at != None %}
+                            <td>
+                              <div class="dropdown ms-auto">
+                                <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="{% url 'delete_due' due.id %}" >
+                                      <span class="dropdown-item">
+                                        <i class="fas fa-trash mx-2"></i> Delete
+                                      </span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </td>
+                            {% else %}
                             <td>
                               <div class="dropdown ms-auto">
                                 <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -132,7 +145,7 @@
                                 </ul>
                               </div>
                             </td>
-
+                          {% endif %}
                           </tr>
                           {% endfor %}
                           <!-- Added -->

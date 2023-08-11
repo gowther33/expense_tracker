@@ -19,13 +19,14 @@ def search_task(request):
         task = Task.objects.all()
         
         tasks = task.filter(
+            Q(created_by__username = query) |
             Q(description__icontains = query) |
-            Q(priority__icontains = query)
+            Q(priority__icontains = query) 
         )
 
 
 
-        filtered_results = tasks.values('description', 'created_by__username', 'priority', 'date')
+        filtered_results = tasks.values('description', 'created_by__username', 'priority', 'date', 'id')
 		
         return JsonResponse(
             list(filtered_results)

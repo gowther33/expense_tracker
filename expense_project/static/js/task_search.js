@@ -38,6 +38,19 @@ const searchFunction = (e) => {
           no_results.style.display = "none";
           tbody.innerHTML = "";
           data.forEach((item) => {
+            let priority;
+            if (item.priority == 1){
+              priority = "Low"
+            }
+            else if (item.priority == 2){
+              priority = "Medium"
+            }
+            else if (item.priority == 3){
+              priority = "High"
+            }
+            else{
+              priority = "Critical"
+            }
             tbody.innerHTML += `
                 <tr>
                 <td>${
@@ -46,8 +59,8 @@ const searchFunction = (e) => {
                     : item.description
                 }</td>
                 <td>${
-                  item.created_by__username.length}</td>
-                  <td>${item.priority}</td>
+                  item.created_by__username}</td>
+                  <td>${priority}</td>
                   <td>${item.date}</td>
                   <td>
                   <div class="dropdown ms-auto">

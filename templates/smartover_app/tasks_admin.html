@@ -110,7 +110,7 @@
                                   <li>
                                     <a href="{% url 'view_task' task.id %}" >
                                       <span class="dropdown-item">
-                                        <i class="fas fa-pen mx-2"></i> View
+                                        <i class="fas fa-eye mx-2"></i> View
                                       </span>
                                     </a>
                                   </li>
@@ -166,7 +166,7 @@
       </div>
     </div>
   </div>
-  <!-- <script src="{% static 'js/task_search.js' %}"></script> -->
+  <script src="{% static 'js/task_search.js' %}"></script>
   <form method="GET" id="amount_up_form" action="{% url 'expense_page_sort' %}">
     <input hidden name="amount_sort" value="2"></input>
   </form>

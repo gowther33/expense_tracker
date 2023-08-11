@@ -315,13 +315,12 @@ def delete_due(request,id):
     if request.user.is_superuser:
         if Due.objects.filter(id=id).exists():
             due = Due.objects.get(id=id)
-            due_source = Income.objects.get(id = due.source.id)
-            # Add income in due source
-            due_source.amount += due.amount
-            due_source.save()
             due.delete()
+            due.save()
+
             messages.success(request,'Due Deleted Successfully')
             return redirect('due')
+            
         else:
             messages.error(request,'Something went Wrong. Please Try Again')
             return redirect('due')
@@ -358,6 +357,28 @@ def due_received(request,id):
         else:
             messages.error(request,'Something went Wrong. Please Try Again')
             return redirect('due_user')
+
+
+@login_required(login_url='login')
+def view_due(request,id):
+
+    if Due.objects.filter(id=id).exists():
+        due = Due.objects.get(id=id)
+
+        context = {
+            'due':due,
+            'values': due,
+        }
+        
+        if request.method == 'GET':
+            return render(request,'dues/due_view.html',context)
+
+    else:
+
+        messages.error(request,'Due does not exists')
+        return redirect('due_user')
+
+
 
 
 @login_required(login_url='login')

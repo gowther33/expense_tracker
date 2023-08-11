@@ -21,4 +21,6 @@ urlpatterns = [
     
     path('search',api.search_due,name="due_search"),
 
+    path('view-due/<int:id>', views.view_due, name  = 'view_due')
+
 ]

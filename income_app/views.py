@@ -497,14 +497,14 @@ def download_as_excel(request,filter_by):
     row_number = 1
     fontStyle = xlwt.XFStyle()
     fontStyle.font.bold = True
-    columns = ['Date','Source','Description','Amount']
+    columns = ['Date','Source','Description','Amount','Added_By']
     
     for col_num in range(len(columns)):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
     fontStyle = xlwt.XFStyle()
     
     incomes = queryset_filter(filter_by).order_by('date')
-    rows = incomes.values_list('date','source__source','description','amount')
+    rows = incomes.values_list('date','source__source','description','amount','created_by')
     for row in rows:
         row_number += 1
         for col_num in range(len(row)):
@@ -523,11 +523,11 @@ def download_as_csv(request,filter_by):
     response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + '-' + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
-    writer.writerow(['Date','Source','Description','Amount'])
+    writer.writerow(['Date','Source','Description','Amount','Added_By'])
     
     incomes = queryset_filter(filter_by).order_by('date')
     for income in incomes:
-        writer.writerow([income.date,income.source.source,income.description,income.amount])
+        writer.writerow([income.date,income.source.source,income.description,income.amount,income.created_by])
     
     writer.writerow(['','','',''])
     writer.writerow(['TOTAL','','',str(incomes.aggregate(Sum('amount'))['amount__sum'])])
@@ -724,42 +724,3 @@ def upload_excel(request):
 
             messages.error(request,'Please Check if the format of excel file is correct.')
             return redirect('import_income')
-
-@login_required(login_url='login')
-def income_page_sort(request):
-
-    incomes =  Income.objects.all()
-    base_url = ''
-
-    try:
-    
-        if 'amount_sort' in request.GET and request.GET.get('amount_sort'):
-            base_url = f'?amount_sort={request.GET.get("amount_sort",2)}&'
-            if int(request.GET.get('amount_sort',2)) == 1:
-                incomes = incomes.order_by('-amount')
-            elif int(request.GET.get('amount_sort',2)) == 2:
-                incomes = incomes.order_by('amount')
-        
-        if 'date_sort' in request.GET and request.GET.get('date_sort'):
-            base_url = f'?date_sort={request.GET.get("date_sort",2)}&'
-            if int(request.GET.get('date_sort',2)) == 1:
-                incomes = incomes.order_by('-date')
-            elif int(request.GET.get('date_sort',2)) == 2:
-                incomes = incomes.order_by('date')
-
-    except:
-        messages.error(request,'Something went wrong')
-        return redirect('income')
-    
-    paginator = Paginator(incomes,5)
-    page_number = request.GET.get('page')
-    page_incomes = Paginator.get_page(paginator,page_number)
-    currency = 'PKR - Pakistani Rupee'
-
-
-    return render(request,'income_app/income.html',{
-        'currency':currency,
-        'page_incomes':page_incomes,
-        'incomes':incomes,
-        'base_url':base_url
-    })

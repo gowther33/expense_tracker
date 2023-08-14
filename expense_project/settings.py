@@ -13,17 +13,17 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 from django.contrib import messages
+import cloudinary_storage
 import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 import django_heroku
-# import sentry_sdk
-# from sentry_sdk.integrations.django import DjangoIntegration
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 MEDIA_DIR = os.path.join(BASE_DIR,'media')
+
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -93,21 +93,13 @@ WSGI_APPLICATION = 'expense_project.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': os.environ.get('DB_NAME'),
-    #     'USER': os.environ.get('DB_USER'),
-    #     'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
-    #     'HOST': os.environ.get('DB_HOST'),
-    #     'PORT': '5432'
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'expense_db',
-        'USER': 'postgres',
-        'PASSWORD': '12345',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_USER_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': '5432'
     }
 }
 
@@ -161,6 +153,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'expense_project/static')
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
+
 
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'

@@ -9,6 +9,9 @@ from django.contrib.auth.models import User
 2 = MEDIUM
 3 = HIGH
 4 = CRITICAL
+
+
+status: Open | Closed
 """
 
 

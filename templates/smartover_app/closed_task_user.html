@@ -71,7 +71,7 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if tasks %}
-                    <h5 class="h3 text-white mb-0 text-center">My Tasks - <span id="expense_count">{{ tasks.count }}</span></h5>
+                    <h5 class="h3 text-white mb-0 text-center">My Tasks - <span id="task_count">{{ tasks.count }}</span></h5>
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead>
@@ -153,18 +153,6 @@
       </div>
     </div>
   </div>
-  <script src="{% static 'js/expense_search.js' %}"></script>
-  <form method="GET" id="amount_up_form" action="{% url 'expense_page_sort' %}">
-    <input hidden name="amount_sort" value="2"></input>
-  </form>
-  <form method="GET" id="amount_down_form" action="{% url 'expense_page_sort' %}">
-    <input hidden name="amount_sort" value="1"></input>
-  </form>
-  <form method="GET" id="date_up_form" action="{% url 'expense_page_sort' %}">
-    <input hidden name="date_sort" value="2"></input>
-  </form>
-  <form method="GET" id="date_down_form" action="{% url 'expense_page_sort' %}">
-    <input hidden name="date_sort" value="1"></input>
-  </form>
-  <script src="{% static 'js/sorting.js' %}"></script>
+  <script src="{% static 'js/task_search.js' %}"></script>
+
 {% endblock %}

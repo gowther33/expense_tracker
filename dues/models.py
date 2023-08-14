@@ -20,15 +20,5 @@ class Due(models.Model):
 	def __str__(self):
 		return str(self.source) + str(self.date )+ str(self.amount)
 
-
-"""
-to change:
-import dues functionality
-and download
-
-searching.js for dues
-sorting.js for dues
-
-income_count id 
-
-"""
+	class Meta:
+		ordering:['-date']

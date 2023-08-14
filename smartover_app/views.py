@@ -9,11 +9,10 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.db.models import Sum
 import xlwt
-# from .utils import queryset_filter
 import csv
 import pandas as pd
 import datetime
-# from .utils import expense_send_success_mail,expense_send_error_mail
+
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
 from datetime import datetime as datetime_custom, timedelta
@@ -316,64 +315,3 @@ def delete_task(request,id):
         messages.error(request,'Only Admin can delete task.')
         return redirect('tasks_page_user')
 
-
-
-# @login_required(login_url='login')
-# def edit_expense(request,id):
-#     if request.user.is_superuser:
-#         if Expense.objects.filter(id=id).exists():
-#             expense = Expense.objects.get(id=id)
-        
-#         else:
-#             messages.error(request,'Expense does not exists')
-#             return redirect('expense')
-        
-#         categories = ExpenseCategory.objects.all().exclude(id=expense.category.id)
-
-#         context = {
-#             'expense':expense,
-#             'values': expense,
-#             'categories':categories
-#         }
-        
-#         if request.method == 'GET':
-#             return render(request,'expense_app/edit_expense.html',context)
-
-#         if request.method == 'POST':
-#             amount = request.POST.get('amount','')
-#             description = request.POST.get('description','')
-#             category = request.POST.get('category','')
-#             date = request.POST.get('expense_date','')
-            
-#             if amount== '':
-#                 messages.error(request,'Amount cannot be empty')
-#                 return render(request,'expense_app/edit_expense.html',context)
-            
-#             amount = float(amount)
-#             if amount <= 0:
-#                 messages.error(request,'Amount should be greater than zero')
-#                 return render(request,'expense_app/edit_expense.html',context)
-            
-#             if description == '':
-#                 messages.error(request,'Description cannot be empty')
-#                 return render(request,'expense_app/edit_expense.html',context)
-            
-#             if category == '':
-#                 messages.error(request,'ExpenseCategory cannot be empty')
-#                 return render(request,'expense_app/edit_expense.html',context)
-            
-#             if date == '':
-#                 date = localtime()
-            
-#             category_obj = ExpenseCategory.objects.get(name =category)
-#             expense.amount = amount
-#             expense.date = date
-#             expense.category = category_obj
-#             expense.description = description
-#             expense.save() 
-            
-#             messages.success(request,'Expense Updated Successfully')
-#             return redirect('expense')
-#     else:
-#         messages.error(request,'Only Admin can edit expense.')
-#         return redirect('expense_user')

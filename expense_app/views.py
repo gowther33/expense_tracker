@@ -492,14 +492,14 @@ def download_as_excel(request,filter_by):
     row_number = 1
     fontStyle = xlwt.XFStyle()
     fontStyle.font.bold = True
-    columns = ['Date','Category','Description','Amount']
+    columns = ['Date','Category','Description','Amount','Created By']
     
     for col_num in range(len(columns)):
         ws.write(row_number,col_num,columns[col_num],fontStyle)
     fontStyle = xlwt.XFStyle()
 
     expenses = queryset_filter(filter_by).order_by('date')
-    rows = expenses.values_list('date','category__name','description','amount')
+    rows = expenses.values_list('date','category__name','description','amount', 'created_by')
     for row in rows:
         row_number += 1
         for col_num in range(len(row)):
@@ -518,11 +518,11 @@ def download_as_csv(request,filter_by):
     response['Content-Disposition'] = 'attachment; filename=Expenses-'+ str(request.user.username) + '-' + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
-    writer.writerow(['Date','Category','Description','Amount'])
+    writer.writerow(['Date','Category','Description','Amount','Created_By'])
     
     expenses = queryset_filter(filter_by).order_by('date')
     for expense in expenses:
-        writer.writerow([expense.date,expense.category.name,expense.description,expense.amount])
+        writer.writerow([expense.date,expense.category.name,expense.description,expense.amount,expense.created_by])
     
     writer.writerow(['','','',''])
     writer.writerow(['TOTAL','','',str(expenses.aggregate(Sum('amount'))['amount__sum'])])
@@ -719,41 +719,3 @@ def upload_excel(request):
 
             messages.error(request,'Please Check if the format of excel file is correct.')
             return redirect('import_expense')
-
-@login_required(login_url='login')
-def expense_page_sort(request):
-
-    expenses =  Expense.objects.all()
-    base_url = ''
-
-    try:
-    
-        if 'amount_sort' in request.GET and request.GET.get('amount_sort'):
-            base_url = f'?amount_sort={request.GET.get("amount_sort",2)}&'
-            if int(request.GET.get('amount_sort',2)) == 1:
-                expenses = expenses.order_by('-amount')
-            elif int(request.GET.get('amount_sort',2)) == 2:
-                expenses = expenses.order_by('amount')
-        
-        if 'date_sort' in request.GET and request.GET.get('date_sort'):
-            base_url = f'?date_sort={request.GET.get("date_sort",2)}&'
-            if int(request.GET.get('date_sort',2)) == 1:
-                expenses = expenses.order_by('-date')
-            elif int(request.GET.get('date_sort',2)) == 2:
-                expenses = expenses.order_by('date')
-    
-    except:
-        messages.error(request,'Something went wrong')
-        return redirect('expense')
-
-    paginator = Paginator(expenses,5)
-    page_number = request.GET.get('page')
-    page_expenses = Paginator.get_page(paginator,page_number)
-    currency = 'PKR - Pakistani Rupee'
-
-    return render(request,'expense_app/expense.html',{
-        'currency':currency,
-        'page_expenses':page_expenses,
-        'expenses':expenses,
-        'base_url':base_url
-    })

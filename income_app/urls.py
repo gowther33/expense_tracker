@@ -7,7 +7,6 @@ urlpatterns = [
 
     path('income_user/',views.income_page_user,name="income_user"),
 
-    path('income-sort/',views.income_page_sort,name="income_page_sort"),
     path('add-income/',views.add_income,name="add_income"),
 
     path('add-income-user/',views.add_income,name="add_income_user"),

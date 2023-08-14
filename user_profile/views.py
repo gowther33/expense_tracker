@@ -3,7 +3,6 @@ from .models import UserProfile
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .utils import load_currency_data
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 
@@ -169,7 +168,6 @@ def change_email_pref(request):
 @login_required(login_url = 'login')
 def change_email_pref_user(request):
     user = User.objects.get(username = request.user.username)
-    print("User Found")
     user_profile = UserProfile.objects.get(user = user)
 
 

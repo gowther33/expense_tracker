@@ -7,7 +7,6 @@ urlpatterns = [
 
     path('expense_user/',views.expense_page_user,name="expense_user"),
 
-    path('expense-sort/',views.expense_page_sort,name="expense_page_sort"),
     
     path('add-expense/',views.add_expense,name="add_expense"),
     

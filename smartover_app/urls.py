@@ -18,5 +18,7 @@ urlpatterns = [
     path('delete-task/<int:id>/', views.delete_task, name= "delete_task"),
 
     path('search',api.search_task,name="task_search"),
+
+    path('search-closed',api.search_task_closed,name="task_search_closed"),
     
 ]

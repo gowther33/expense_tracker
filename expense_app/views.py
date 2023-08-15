@@ -343,9 +343,6 @@ def edit_expense_category(request,id):
             messages.error(request,'Something Went Wrong')
             return redirect('add_expense_category')
 
-        if category.user != request.user:
-            messages.error(request,'Something Went Wrong')
-            return redirect('add_expense_category')
 
         context = {
             'value':category.name,

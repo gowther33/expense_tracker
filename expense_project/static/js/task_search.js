@@ -73,14 +73,14 @@ const searchFunction = (e) => {
                       <li>
                         <a href="/smart-over/view-task/${item.id}" >
                           <span class="dropdown-item">
-                            <i class="fas fa-pen mx-2"></i> View
+                            <i class="fas fa-eye mx-2"></i> View
                           </span>
                         </a>
                       </li>
                       <li>
                         <a href="/smart-over/close-task/${item.id}">                                      
                           <span class="dropdown-item">
-                              <i class="fas fa-print mx-2"></i> Close Task
+                              <i class="fas fa-box-archive mx-2"></i> Close Task
                           </span>
                         </a>
                       </li>
@@ -148,7 +148,7 @@ const searchFunction = (e) => {
                   <li>
                     <a href="/smart-over/view-task/${item.id}" >
                       <span class="dropdown-item">
-                        <i class="fas fa-pen mx-2"></i> View
+                        <i class="fas fa-eye mx-2"></i> View
                       </span>
                     </a>
                   </li>

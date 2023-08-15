@@ -8,7 +8,7 @@ from django.contrib.auth import update_session_auth_hash
 
 @login_required(login_url = 'login')
 def profile_admin(request,new_context={}):
-    # currency_data = load_currency_data()
+
     form = PasswordChangeForm(request.user)
     user = User.objects.get(username = request.user.username)
     
@@ -65,7 +65,7 @@ def profile_admin(request,new_context={}):
 
 @login_required(login_url = 'login')
 def profile_user(request,new_context={}):
-    # currency_data = load_currency_data()
+
     form = PasswordChangeForm(request.user)
     user = User.objects.get(username = request.user.username)
     

@@ -1,6 +1,7 @@
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
 const expense_count = document.getElementById("expense_count");
+const doc_title = document.title
 let expense_count_initial = expense_count.innerHTML;
 const tbody = document.querySelector("#table-body-data");
 let expense_list = tbody.innerHTML;
@@ -38,7 +39,47 @@ const searchFunction = (e) => {
           no_results.style.display = "none";
           tbody.innerHTML = "";
           data.forEach((item) => {
-            tbody.innerHTML += `
+            if (doc_title == "Expenses"){
+              tbody.innerHTML += `
+                  <tr>
+                  <td>${item.amount}</td>
+                  <td>${
+                    item.category__name.length > 20
+                      ? item.category__name.substring(0, 19) + "..."
+                      : item.category__name
+                  }</td>
+                  <td>${
+                    item.description.length > 30
+                      ? item.description.substring(0, 29) + "..."
+                      : item.description
+                  }</td>
+                  <td>${item.date}</td>
+                  <td>${item.created_by}</td>
+                  <td>
+                  <div class="dropdown ms-auto">
+                  <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="/expense/edit-expense/${item.id}" >
+                        <span class="dropdown-item">
+                          <i class="fas fa-pen mx-2"></i> Edit
+                        </span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/expense/expense-memo/${item.id}" target="_blank">                                      
+                        <span class="dropdown-item">
+                            <i class="fas fa-print mx-2"></i> Print
+                        </span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                </td>
+                </tr>`;
+            }
+            else{
+              tbody.innerHTML += `
                 <tr>
                 <td>${item.amount}</td>
                 <td>${
@@ -58,13 +99,6 @@ const searchFunction = (e) => {
                 <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
                 <ul class="dropdown-menu">
                   <li>
-                    <a href="/expense/edit-expense/${item.id}" >
-                      <span class="dropdown-item">
-                        <i class="fas fa-pen mx-2"></i> Edit
-                      </span>
-                    </a>
-                  </li>
-                  <li>
                     <a href="/expense/expense-memo/${item.id}" target="_blank">                                      
                       <span class="dropdown-item">
                           <i class="fas fa-print mx-2"></i> Print
@@ -75,6 +109,7 @@ const searchFunction = (e) => {
               </div>
               </td>
               </tr>`;
+            }
           });
         }
       });

@@ -5,7 +5,10 @@ from cloudinary.models import CloudinaryField
 
 
 def user_path(instance, filename):
-    return 'profile_pic/{0}-{1}/{2}'.format(instance.user.username ,instance.user.id,filename)
+	
+	path = 'profile_pic/{0}-{1}/{2}'.format(instance.user.username ,instance.user.id,filename)
+	return path
+
 
 class UserProfile(models.Model):
 	user = models.OneToOneField(to = User,on_delete = models.CASCADE)

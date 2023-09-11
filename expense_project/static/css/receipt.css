@@ -1,0 +1,39 @@
+img.logo{float:left;
+    width:20px;
+    height:20px;
+    }
+@media print
+ {
+    span.heading {font-size:15pt;
+    }
+    body{margin-top:0;
+    margin-right:0;
+    margin-left:0;
+    margin-bottom:0;
+    }
+      table.Padd{border-style: solid;
+      width : 100%;
+      text-align : center;
+      border : 1px;
+      border-radius : 10px;
+      font-family:courier;
+      }
+    div.Recieptinfo{font-size:8pt;
+    font-family:courier;
+    }
+    div.Pinfo{font-size:10pt;
+    font-family:courier;
+    }
+    div.Amount{float:right;
+    font-size:10pt;
+    font-family:courier;
+    }
+    div.RecieptNote{font-size:10pt;
+    }
+    div.Footer{font-size:8pt;
+    }
+    img.logo{float:left;
+    width:30px;
+    height:30px;
+    }
+  }

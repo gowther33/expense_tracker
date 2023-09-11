@@ -10,7 +10,6 @@ function clearFilters() {
   amount_down_form = document.getElementById("amount_down_form");
   date_up_form = document.getElementById("date_up_form");
   date_down_form = document.getElementById("date_down_form");
-  amount_up.addEventListener("click", (e) => amount_up_form.submit());
-  amount_down.addEventListener("click", (e) => amount_down_form.submit());
+
   date_up.addEventListener("click", (e) => date_up_form.submit());
   date_down.addEventListener("click", (e) => date_down_form.submit());

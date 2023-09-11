@@ -1,0 +1,181 @@
+{%load static%}
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset = "UTF-8">
+		<title>Rider Fuel Calculator | Biolight Laboratory</title>
+		<!-- <link rel="shortcut icon" href="Logo.ico"/> -->
+		<link rel = "stylesheet" href = "{% static  'css/Basic Page Layout.css' %}" type="text/css" />
+		
+	</head>
+	<body>
+		<header>
+			<div id = "center_content">
+			<img src = "{% static 'img/logo.jpg' %}" height = "9%" align = "Left" width = "9%" style = "border-radius:60%; position:200px,800px; float : Left;"/>
+			<h1 align = "Center" style = "margin: 0;">Biolight Laboratories & Diagnostic Centre</h1>
+			<p align = "Center"><small>Because We Value Life</small></p>
+			</div>
+		</header>
+		<nav>
+			<div id = "center_content">
+			<!--<a href = "file:///C:/Users/LEO!/Desktop/Website/Home-Biolight.html" style = "margin-left:5%">| Home</a> |-->
+			</div>
+		</nav>
+		<div id = "center_content">
+		<form  class = "addpatient" autocomplete = "on" novalidate method = "post" style = "margin-bottom : 10px;">
+			{% csrf_token %}
+			<fieldset>
+				<legend><h4>Rider Fuel Calculator</h4></legend>
+				<fieldset>
+					<legend><h5>Rider Details:</h5></Legend>
+					<b>Name:</b> <input name = "Pname" id ="Pname" list = 'Riders' type = "text" autofocus required>
+					<datalist id = "Riders">
+						<option value="Izan">
+						<option value="Shahbaz">
+						<option value="Noor">
+						<option value="Stelvan">
+						<option value="Sohail">
+					</datalist>	
+					&nbsp;<b>Fuel Date:</b> <input type="date" id="fueldate" name="fueldate" required>
+					&nbsp;<b>Shift:</b> <select name="Prel" id = "Prel" required>
+						<option value="Morning" selected>Morning</option>
+						<option value="Night">Night</option>
+					</select>
+					</br>
+					<b>Print Date:</b>&nbsp;<span id = "Date"></span>&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Print Time:</b>&nbsp;<span id = "Time"></span>&nbsp;
+				</fieldset>
+				<fieldset>
+					<legend><h5>Trip Summary:</h5></legend>
+					<datalist id = "Centres">
+						<option value="Biolight Laboratory">
+						<option value="7th Day Adventist Hospital">
+						<option value="Al-Hafiz Clinic">
+						<option value="Al-Shifa Clinic">
+						<option value="Ali Medical Clinic">
+						<option value="AnkleSaria">
+						<option value="Bismillah Hospital - Baloch Colony">
+						<option value="Board Office">
+						<option value="Dar-ul-Shifa">
+						<option value="Dr. Ejaz Clinic">
+						<option value="Dr. Ismat's House (Pakola Masjid)">
+						<option value="Dr. Kulsoom">
+						<option value="Dr. Wazir Clinic">
+						<option value="Dua Clinic">
+						<option value="Etemad Medical Centre">
+						<option value="Falahi Medical Centre">
+						<option value="Get Well Clinic">
+						<option value="Gilani Clinic (Dr. DK)">
+						<option value="Godam Chowrangi - Brooks Chowrangi">
+						<option value="Hashmani Hospital">
+						<option value="Husaini Collection Point - Nishter Park">
+						<option value="Jilani Medical Centre">
+						<option value="JPMC">
+						<option value="Khan Clinic">
+						<option value="Kharadar General Hospital">
+						<option value="Life Care Hospital">
+						<option value="LUHMS - Gulshan">
+						<option value="LUHMS - Fatima Bai">
+						<option value="Maryam Market">
+						<option value="Maryam Medical Centre">
+						<option value="Medicentre Hospital">
+						<option value="Mehran Medical Centre">
+						<option value="Naseem Medical Centre">
+						<option value="Nawab Clinic">
+						<option value="Rida Medical Centre">
+						<option value="Sir Syed Hospital">
+						<option value="Tahir Shamsi">
+						<option value="Taj Medical Complex">
+						<option value="Tariq Clinic">
+						<option value="The Laboratory">
+						<option value="Urdu Bazaar">
+						<option value="Al-Hayyat Medical Centre">
+						<option value="Habib Public School">
+						<option value="Dr. Farrukh">	
+					</datalist>					
+					<table id = "Tadd" class = "Padd" border = "1">
+							<tr>
+								<th>Serial#</th>
+								<th>Origin</th>
+								<th>Destination</th>
+								<th>Distance (km)</th>
+							</tr>
+							<tr>
+								<th colspan = "3">Total</th>
+								<td></td>
+							</tr>
+					</table>
+					<!-- <div id = "rows"></div></br>
+					<div id = "rows1"></div> -->
+					</br>
+					<button id = "addbtn" type="button" Onclick = "addtest();footer();">Add Route</button>
+					<button id = "dwnbtn" type="button" Onclick = "downroute();setorigin();setdestination();footer();" disabled>Down Route</button>
+					<button id = "labbtn" type="button" Onclick = "tolab();setorigin();setdestination();footer();" disabled>To Lab</button>
+					<button id = "set_origin" type="button" Onclick = "setorigin();" disabled>Set Origin</button>
+					<button id = "set_destination" type="button" Onclick = "setdestination();" disabled>Set Destination</button>
+					<!--<button id = "gtdstnc" type="button" Onclick = "update();">Get Distance</button>-->
+					<button id = "delete" type="button" Onclick = "delete_row();" disabled>Delete</button>
+					Row#:<input type="hidden" id = "deleterow" min="0" max="0" onchange = 'setDeleteRow(this); document.getElementById("delete").disabled = false; document.getElementById("addbtn").disabled = true;' value = "0">
+					<button id = "done" type="button" Onclick = "enableGrcpt(); updatefuel();" disabled style = "float:right">Done</button>
+				</fieldset>
+				<fieldset>
+					<legend><h5>Fuel Summary:</h5></legend>
+					<table id = "Fuel Summary" class = "Padd" border = "1">
+							<tr>
+								<th>Serial#</th>
+								<th>Particulars</th>
+								<th>Amount</th>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td>Fuel Rate</td>
+								<td><span id = "fuelrate"></span></td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Calculated Fuel</td>
+								<td><span id = "calfuel"></span></td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>Maintenance</td>
+								<td><span id = "incent"></span></td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>Total Amount Payable</td>
+								<td><span id = "TAP"></span></td>
+							</tr>
+					</table>
+				</fieldset>
+				</br>
+				<!-- <button id="Grcpt" type="submit" style = "float:right" onclick="Greceipt()" disabled>Save Expense</button> -->
+				<input id = "Grcpt" type="submit" value="Generate Summary" onclick = "Greciept()" style = "float:right" disabled>
+			</fieldset>
+		</form>
+		</div>
+		<footer><!--id = "StickyFooter"-->
+			<p align = "Center"><small>© Copyright 2019, All rights to this website are reserved</br>
+			Red Crescent Medical Centre & Consultants Clinic, Jigar Murad Abadi Road, Near Islamia College, Karachi</br>
+			Contact: 021-34894616, lab.biolight@gmail.com</small></p>
+		</footer>
+		<script src="{% static 'js/fuel_calculator.js' %}"></script>
+		<script>
+		var d = new Date();
+		var hour = 0;
+		var ampm = "";
+		if(d.getHours() <= 12)
+			{
+				hour = d.getHours();
+				ampm = "AM";
+			}
+		else
+			{
+				hour = d.getHours()-12;
+				ampm = "PM";
+			}
+		document.getElementById("Date").innerHTML = d.toDateString();
+		document.getElementById("Time").innerHTML = hour+":"+d.getMinutes()+":"+d.getSeconds()+" "+ampm;
+		</script>
+	</body>
+</html>

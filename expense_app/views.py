@@ -18,7 +18,10 @@ from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
 from datetime import datetime as datetime_custom, timedelta
 from django.db.models import Q
+from fuel_calculator_app.models import FuelCalculator, Fuel
+import json
 
+fuel_rate = list(Fuel.objects.all())[0].fuel_rate
 
 # Sum all expenses in the page
 def expense_sum(expenses):
@@ -39,6 +42,7 @@ def expense_page(request):
     expenses = Expense.objects.all().order_by('-date')
 
     try:
+        
 
         if 'date_from' in request.GET and request.GET['date_from'] != '':
             date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
@@ -179,7 +183,7 @@ def expense_page_user(request):
 def add_expense(request):
     if ExpenseCategory.objects.all().exists():
         
-        categories = ExpenseCategory.objects.all()
+        categories = ExpenseCategory.objects.all().exclude(name="Fuel expense")
 
         context = {
             'categories' : categories,
@@ -286,15 +290,36 @@ def expense_memo(request, id):
             messages.error(request,'Expense does not exists')
             return redirect('expense_user')
 
+    if expense.category.name == "Fuel expense":
 
-    context = {
-        'expense':expense,
-        'values': expense,
-        'printed_by':request.user.username
-    }
-        
-    if request.method == 'GET':
-        return render(request,'expense_app/expense_memo.html',context)
+        fuel_obj = FuelCalculator.objects.get(expense_obj = expense)
+        rows = len(fuel_obj.distances_array)
+        origin_json = json.dumps(fuel_obj.origin_array) 
+        destination_json = json.dumps(fuel_obj.destination_array) 
+        distances_json = json.dumps(fuel_obj.distances_array)      
+
+        context = {
+            'values': fuel_obj,
+            'printed_by':request.user.username,
+            'rows': range(1,rows+1),
+            'fuel_rate':fuel_rate,
+            'origin_json': origin_json,
+            'destination_json': destination_json,
+            'distances_json': distances_json
+        }
+            
+        if request.method == 'GET':
+            return render(request,'fuel_calculator_app/report.html',context)        
+
+    else:
+        context = {
+            'expense':expense,
+            'values': expense,
+            'printed_by':request.user.username
+        }
+            
+        if request.method == 'GET':
+            return render(request,'expense_app/expense_memo.html',context)
 
 
 @login_required(login_url='login')

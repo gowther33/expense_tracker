@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'income_app',
     'dues',
     'smartover_app',
+    'fuel_calculator_app',
     'django_user_agents',
 ]
 

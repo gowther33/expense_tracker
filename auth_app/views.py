@@ -94,7 +94,7 @@ class Login(View):
                     messages.success(request,"Welcome, "+ user.username + ". You are now logged in.")
                     return redirect('user_dashboard')
             else:
-                messages.error(request,'Invalid credentials')
+                messages.error(request,'Invalid credentials or Account not active')
                 return render(request,'auth_app/login.html',context=context)
         else:
             messages.error(request,'Something went wrong.')

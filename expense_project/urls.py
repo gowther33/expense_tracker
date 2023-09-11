@@ -36,6 +36,7 @@ urlpatterns = [
     path('user/',include('user_profile.urls')),
     path('due/',include('dues.urls')),
     path('smart-over/', include('smartover_app.urls')),
+    path('fuel-calculator/', include('fuel_calculator_app.urls')),
     path('admin/', admin.site.urls),
 ]
 

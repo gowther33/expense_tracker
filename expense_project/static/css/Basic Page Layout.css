@@ -1,0 +1,56 @@
+/*html{
+margin-right : 200px;
+margin-left : 200px;
+}*/
+header{padding : 5px;
+    color : White;
+    max-width: 100%;
+    background-color : #cc0000;
+    margin-bottom : 0; margin-top: 0;
+    }
+    a {color: white;
+    text-decoration: none;
+    }
+    a:hover, a:active {
+    background-color: #737373;}
+    fieldset{border-radius: 10px;
+    }
+    nav{padding : 3px;
+    color : white;
+    background-color : #8c8c8c;
+    width : 100%;
+    }
+    table.Precord{text-align : left;
+    }
+    table.Padd{border-style: solid;
+    width : 100%;
+    text-align : center;
+    border : 1px;
+    border-radius : 10px;
+    }
+    footer{padding : 2.5px;
+    color : white;
+    max-width : 100%;
+    background-color : #cc0000;
+    position: relative;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    }
+    #center_content{
+    margin-left : 200px;
+    margin-right : 200px;
+    }
+    body{/*background-image : url("Watermark.png");*/
+    background-position : center;
+    background-repeat : no-repeat;
+    background-attachment : relative;
+    background-color : #ffffe6;
+    height : 100%;
+    margin : 0;
+    }
+    img.Reporticon{width : 30px;
+    height : 30px
+    }
+    a.Reportlink{
+    }

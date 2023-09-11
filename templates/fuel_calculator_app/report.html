@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<meta charset = "UTF-8">
+		<title>Rider Fuel Summary | Biolight Laboratory</title>
+		<link rel="shortcut icon" href="{% static 'img/logo.jpg' %}" />
+		<link rel = "stylesheet" href = "{% static 'css/receipt.css' %}"/>
+	</head>
+	<body>
+		<hr>
+		<img class="logo" src="{% static 'img/Black.jpg' %}">&nbsp;&nbsp;<span class = "heading">Biolight Laboratories - Because we value life</span>
+		<hr>
+		<div id = "center_content">
+		<form class = "addpatient" autocomplete = "on" novalidate method = "post" style = "margin-bottom : 10px;">
+				<fieldset>
+					<legend><h5>Rider Details:</h5></Legend>
+					<div class = "Pinfo">
+						<b>Name:</b>&nbsp;<span id = "Pname"> {{values.rider_name}} </span>&emsp;
+						<b>Shift:</b>&nbsp;<span id = "Prel"> {{values.shift}} </span>&emsp;
+						<b>Fuel Date:</b>&nbsp;<span id = "fueldate"> {{values.fuel_date}} </span>&nbsp;
+						<b>Printed By:</b>&nbsp;<span id = "printed_by"> {{printed_by}} </span>&nbsp;
+					</br>
+					<b>Print Date:</b>&nbsp;<span id = "Date"></span>&nbsp;
+					&emsp;<b>Print Time:</b>&nbsp;<span id = "Time"></span>&nbsp;
+					<!--<b>Date:</b>&nbsp;<span id = "Date"></span>&nbsp;</div>-->
+				</fieldset>
+				<fieldset>
+					<legend><h5>Trip Summary:</h5></legend>					
+					<table id = "Tadd" class = "Padd" border = "1">
+							<tr>
+								<th>Serial#</th>
+								<th>Origin</th>
+								<th>Destination</th>
+								<th>Distance (km)</th>
+							</tr>
+							<tr>
+								<th colspan = "3">Total</th>
+								<td><span id = "Total_distance"> {{values.total_distance}} </span> km</td>
+							</tr>
+					</table>
+					</br>
+				</fieldset>
+				<fieldset>
+					<legend><h5>Fuel Summary:</h5></legend>
+					<table id = "Fuel Summary" class = "Padd" border = "1">
+							<tr>
+								<th>Serial#</th>
+								<th>Particulars</th>
+								<th>Amount</th>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td>Fuel Rate</td>
+								<td>Rs. <span id = "fuelrate">{{fuel_rate}}</span>/-</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Calculated Fuel</td>
+								<td>Rs. <span id = "calfuel">{{values.fuel_charges}}</span>/-</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>Incentive</td>
+								<td>Rs. <span id = "incent"> {{values.incentive}} </span>/-</td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>Total Amount Payable</td>
+								<td>Rs. <span id = "TAP"> {{values.amount_payable}} </span>/-</td>
+							</tr>
+					</table>
+				</fieldset>
+				</br>
+		</form>
+		</div>
+		<!-- Serialize arrays using json_script -->
+		<script>
+			var origin_array = JSON.parse('{{ origin_json|safe }}');
+			var destination_array = JSON.parse('{{ destination_json|safe }}');
+			var distances = JSON.parse('{{ distances_json|safe }}');
+			var insertrows = distances.length;
+
+			// Add data in the table
+			for (var i = 0; i<insertrows; i++)
+			{
+				var table = document.getElementById("Tadd");
+				var rows = table.rows.length;
+				var row = table.insertRow(rows-1);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				cell1.innerHTML = table.rows.length-2;
+				cell2.innerHTML = origin_array[i];
+				cell3.innerHTML = destination_array[i];
+				cell4.innerHTML = distances[i];
+			}
+			// console.log(origin);
+			// console.log(destination);
+			// console.log(distances);
+
+
+			var d = new Date();
+			var hour = 0;
+			var ampm = "";
+			if(d.getHours() <= 12)
+			{
+				hour = d.getHours();
+				ampm = "AM";
+			}
+			else
+			{
+				hour = d.getHours()-12;
+				ampm = "PM";
+			}
+			document.getElementById("Date").innerHTML = d.toDateString();
+			document.getElementById("Time").innerHTML = hour+":"+d.getMinutes()+":"+d.getSeconds()+" "+ampm;
+			window.print();
+		</script>
+	</body>
+</html>

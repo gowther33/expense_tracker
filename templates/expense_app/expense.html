@@ -24,7 +24,7 @@
             </ol>
           </nav>
         </div>
-        <div class="col-md-3 text-right ml--5 mr-5">
+        <div class="col-md-3 text-right ml--5 mr-4">
           <div class="input-group input-group-alternative input-group-merge">
             <div class="input-group-prepend">
               <span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text">
@@ -37,15 +37,17 @@
             </div>
           </div>
         </div>
-        <div class="col-md-2 text-right ml-3 mr--3">
+
+        <div class="col-md-2 text-right mr--3">
           <a href="{% url 'import_expense' %}" class="btn btn btn-neutral">Import</a> 
         </div>
+        
         <div class="col-md-2 text-right ml--4">
           <a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a>
         </div>
       </div>
       <hr class="mt--2"/>
-      <div class="row align-items-center py-4">
+      <div class="row align-items-center py-4" style="position: relative;">
         <div class="col mt--5 ml-5">
           <form method="GET" class="form-inline ml-5" action="{% url 'expense' %}">
             <div class="form-group">
@@ -57,7 +59,12 @@
             <div class="ml-5">
               <span class="ml-5">
                 <button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button>
-              </span></div><button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
+              </span>
+            </div>
+            <button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
+            <div id="calculate-fuel-btn" class="col-md-2 text-right ml--4" style="position: absolute; right: 0;">
+              <a href="{% url 'calculate_fuel' %}" class="btn btn btn-neutral">Calculate Fuel</a>
+            </div>
             </form>
           </div>
         </div>

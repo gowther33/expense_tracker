@@ -7,6 +7,8 @@ from expense_app.models import Expense
 
 class Fuel(models.Model):
     fuel_rate = models.DecimalField(max_digits=5, decimal_places=2)
+    maintenance_factor = models.DecimalField(max_digits=5, decimal_places=2, default=1.5)
+    idling_factor = models.DecimalField(max_digits=5, decimal_places=2, default=1.1)
 
 
 class FuelCalculator(models.Model):

@@ -1,4 +1,5 @@
 
+var IDs = 1
 origin_array = [];
 destination_array = [];
 distances = [];
@@ -6,15 +7,22 @@ var origin = null;
 var destination = null;
 var set_delete_row = null;
 var fuel_rate;
+var maintenance_factor;
+var idling_factor;
 fetch("/fuel-calculator/get-fuel")
 .then((res) => res.json())
 .then((data) => {
-    fuel_rate = data.rate
+    fuel_rate = data.rate;
+    maintenance_factor = data.maintenance;
+    idling_factor = data.idling
     sessionStorage.setItem("fuel_rate", fuel_rate);
-    console.log("Session stored: fuel rate")
+    console.log(`Fuel Rate: ${fuel_rate}`);
+    console.log(`maintenance: ${maintenance_factor}`);
+    console.log(`idling: ${idling_factor}`);
 })
 function addtest()
 {	
+    console.log(`IDs: ${IDs}`)
     document.getElementById("addbtn").disabled = true;
     document.getElementById("dwnbtn").disabled = true;
     document.getElementById("labbtn").disabled = true;
@@ -40,7 +48,6 @@ function addtest()
         }
     else
         {
-            cell2.innerHTML =  destination_array[table.rows.length-4];
             origin = destination_array[table.rows.length-4];
             setorigin();
         }
@@ -110,23 +117,30 @@ function setorigin()
     var t = document.getElementById("Tadd");
     var editrow = t.rows.length-2;
     origin_array[t.rows.length-3] = origin;
-    t.rows[editrow].cells[1].innerHTML = origin;
+    t.rows[editrow].cells[1].innerHTML = `<input id = 'org${IDs}' name = 'origin'  type = 'text'  style = 'width:100%' readonly>`;
+    document.getElementById(`org${IDs}`).setAttribute('value',origin)  
     document.getElementById("set_origin").disabled = true;
     document.getElementById("set_destination").disabled = false;
     //document.getElementById("rows").innerHTML = origin_array;
+    console.log(`ids in origin: ${IDs}`)
 }
 function setdestination()
 {
     var t = document.getElementById("Tadd");
     var editrow = t.rows.length-2;
     destination_array[t.rows.length-3] = destination;
-    t.rows[editrow].cells[2].innerHTML = destination;
+    // t.rows[editrow].cells[2].innerHTML = destination;
+    t.rows[editrow].cells[2].innerHTML = `<input id = 'dest${IDs}' name = 'destination'  type = 'text'  style = 'width:100%' readonly>`;
+    document.getElementById(`dest${IDs}`).setAttribute('value',destination)
     document.getElementById("addbtn").disabled = false;
     document.getElementById("dwnbtn").disabled = false;
     document.getElementById("labbtn").disabled = false;
     document.getElementById("set_destination").disabled = true;
+    console.log(`ids in destination: ${IDs}`)
     //document.getElementById("delete").disabled = false;
     //document.getElementById("rows1").innerHTML = destination_array;
+    // Row added
+    IDs++;
     update();
     Total();
 }
@@ -690,19 +704,19 @@ function update()
                 {
                     distances[i] = 9.2;
                 }
-            else if (current_origin == "Dr. Ismat's House (Pakola Masjid)" && current_destination == "Biolight Laboratory")
+            else if (current_origin == "Dr. Ismat House (Pakola Masjid)" && current_destination == "Biolight Laboratory")
                 {
                     distances[i] = 2.0;
                 }
-            else if (current_origin == "Biolight Laboratory" && current_destination == "Dr. Ismat's House (Pakola Masjid)")
+            else if (current_origin == "Biolight Laboratory" && current_destination == "Dr. Ismat House (Pakola Masjid)")
                 {
                     distances[i] = 2.0;
                 }
-            else if (current_origin == "Dr. Ismat's House (Pakola Masjid)" && current_destination == "AnkleSaria")
+            else if (current_origin == "Dr. Ismat House (Pakola Masjid)" && current_destination == "AnkleSaria")
                 {
                     distances[i] = 1.8;
                 }
-            else if (current_origin == "AnkleSaria" && current_destination == "Dr. Ismat's House (Pakola Masjid)")
+            else if (current_origin == "AnkleSaria" && current_destination == "Dr. Ismat House (Pakola Masjid)")
                 {
                     distances[i] = 2.7;
                 }
@@ -714,7 +728,7 @@ function update()
                 {
                     distances[i] = 11.0;
                 }
-            else if (current_origin == "Biolight Laboratory" && current_destination == "Dr. Ismat's House (Pakola Masjid)")
+            else if (current_origin == "Biolight Laboratory" && current_destination == "Dr. Ismat House (Pakola Masjid)")
                 {
                     distances[i] = 11.0;
                 }
@@ -963,7 +977,10 @@ function update()
                     distances[i] = 0;
                 }
             table.rows[i+1].cells[0].innerHTML = i+1;
-            table.rows[i+1].cells[3].innerHTML = distances[i];
+            let dis = distances[i]
+            table.rows[i+1].cells[3].innerHTML = `<input type = 'number' name = 'distance' value = ${dis}  style = 'width:100%' readonly>`;
+
+            // table.rows[i+1].cells[3].innerHTML = distances[i]
             //table.rows[i+1].cells[2].innerHTML = destination_array[i];
             //table.rows[i+1].cells[1].innerHTML = origin_array[i];
         }
@@ -972,13 +989,36 @@ function update()
 function Total()
 {
     var table = document.getElementById("Tadd");
+    // Iterate through each row in the table body
+    const tbody = table.querySelector("tbody");
+    const rows = tbody.getElementsByTagName("tr");
+
     var tableLength = table.rows.length;
+
+    console.log(`table length: ${tableLength}`)
     var Total = 0;
-    for (var i = 1; i<tableLength-1; i++)
+    for (let i = 1; i<tableLength-1; i++)
         {
-            Total += parseFloat(document.getElementById("Tadd").rows[i].cells[3].innerHTML)
+
+            const inputD = rows[i].getElementsByTagName("td")[3].querySelector("input[type='number']");
+
+            // Ensure the input field exists and has a valid numerical value
+            if (inputD && !isNaN(inputD.valueAsNumber)) {
+              // Add the numerical value to the total
+              Total += inputD.valueAsNumber;
+            }
+
+            // Added
+            // let row_dist = document.getElementById(`dist${i}`).value
+            // console.log(`distance: ${row_dist}`)
+            // Total += row_dist
+            //
+            // Total += parseFloat(document.getElementById("Tadd").rows[i].cells[3].innerHTML)
         }
-    table.rows[tableLength-1].cells[1].innerHTML = (Total).toFixed(2)+" km";
+    total_distance = parseFloat(Total.toFixed(2) +" km");
+    // table.rows[tableLength-1].cells[1].innerHTML = (Total).toFixed(2)+" km";
+    console.log("Total distance")
+    table.rows[tableLength-1].cells[1].innerHTML = `<input name = 'Total_Distance' id = 'Total_Distance' value = ${total_distance} type = 'text' style = 'width:100%' readonly>`
     sessionStorage.setItem("Psum", Total);
     document.getElementById("done").disabled = false;
 }
@@ -987,40 +1027,35 @@ function updatefuel()
     var Total_distance = parseFloat(sessionStorage.getItem("Psum")).toFixed(2);
     //var Total_distance = parseFloat(sessionStorage.getItem("Psum"));
     sessionStorage.setItem("Total_distance", Total_distance);
-    var fuel = Total_distance*(fuel_rate/45)*1.1;
+
+    var fuel = Total_distance*(fuel_rate/45)*idling_factor;
+    // var fuel = Total_distance*(fuel_rate/45)*1;
+
     //var fuel = Total_distance*(fuel_rate/45);
     sessionStorage.setItem("calfuel", (fuel).toFixed(2));
     var incentive = 0;
     var distance_1 = 0;
     var distance_2 = 0;
     var distance_3 = 0;
-    /*if(Total_distance < 50 || Total_distance == 50)
-    {
-        distance_1 = Total_distance; 
-        incentive = (distance_1)*1;
-    }
-    else if(Total_distance > 50 && Total_distance < 100)
-    {
-        distance_1 = 50;
-        distance_2 = Total_distance - 50;
-        incentive = (distance_1)*0.6 + (distance_2)*0.75;
-    }
-    else if(Total_distance > 100)
-    {
-        distance_1 = 50;
-        distance_2 = 50;
-        distance_3 = Total_distance - 100;
-        incentive = (distance_1)*0.5 + (distance_2)*0.6 + (distance_3)*0.75;
-    }*/
-    //incentive = Total_distance*1;
-    incentive = Total_distance*1;
+    
+    incentive = Total_distance*maintenance_factor;
     sessionStorage.setItem("incent", (incentive).toFixed(2));
     var Total_amount = fuel + incentive;
     sessionStorage.setItem("TAP", Math.ceil(Total_amount));
-    document.getElementById("calfuel").innerHTML = "Rs."+(fuel).toFixed(2)+"/-";
-    document.getElementById("incent").innerHTML = "Rs."+Math.ceil(incentive)+"/-";
-    document.getElementById("TAP").innerHTML = "Rs."+Math.ceil(Total_amount)+"/-";
-    document.getElementById("fuelrate").innerHTML = "Rs."+fuel_rate+"/-";
+    
+    fuel = fuel.toFixed(2)
+    incentive = Math.ceil(incentive)
+    Total_amount = Total_amount.toFixed(2)
+
+    // document.getElementById("fuelrate").innerHTML = "Rs."+fuel_rate+"/-";
+    // document.getElementById("calfuel").innerHTML = "Rs."+(fuel).toFixed(2)+"/-";
+    // document.getElementById("incent").innerHTML = "Rs."+Math.ceil(incentive)+"/-";
+    // document.getElementById("TAP").innerHTML = "Rs."+Math.ceil(Total_amount)+"/-";
+
+    document.getElementById("fuelrate").innerHTML = `<input type = 'number' name = 'fuelrate' value = ${fuel_rate} style = 'width:100%'  readonly>`;
+    document.getElementById("calfuel").innerHTML = `<input type = 'number' name = 'calfuel' value = ${fuel} style = 'width:100%'  readonly>`;
+    document.getElementById("incent").innerHTML = `<input type = 'number' name = 'incentive' value = ${incentive} style = 'width:100%'  readonly>`;
+    document.getElementById("TAP").innerHTML = `<input type = 'number' name = 'TAP' value = ${Total_amount} style = 'width:100%'  readonly>`;
 }
 function enableGrcpt()
 {
@@ -1096,8 +1131,7 @@ function Greciept()
             })
             .then((res) => res.json())
             .then((data) => {
-                const url = data.redirect_url;
-                window.location.href = url;
+                window.innerHTML = data.message
             })
             .catch(err => {
                 console.log('Error', err)

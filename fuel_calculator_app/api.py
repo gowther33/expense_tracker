@@ -8,12 +8,14 @@ import json
 @login_required(login_url='login')
 def get_fuel(request):
     
-    fuel = Fuel.objects.all()
+    fuel = Fuel.objects.get()
 
+    rate = fuel.fuel_rate
+    maintenance = fuel.maintenance_factor
+    idling = fuel.idling_factor
 
-    rate = list(fuel)[0].fuel_rate
+    response = {"rate":rate, 'maintenance':maintenance, 'idling':idling}
 
-    response = {"rate":rate}
     return JsonResponse(
         response
     )

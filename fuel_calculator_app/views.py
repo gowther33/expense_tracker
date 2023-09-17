@@ -17,22 +17,32 @@ def calculate_fuel(request):
 
     if request.method == 'POST':
 
-        data = json.loads(request.body.decode('utf-8'))
+        # data = json.loads(request.body.decode('utf-8'))
 
-        rider = data['rname'] 
-        date = data['fueldate']
-        shift = data['shift']
-        total_distance = float(data['distance'])
-        fuel_charges = float(data['calfuel'])
-        incentive = float(data['incentive'])
-        total_payable = float(data['TAP'])
-
-        origin = data['origin']
-        destination = data['destination']
-        distances = data['distances']
+        # From top html
+        # rider = data['rname'] # Pname
+        # date = data['fueldate'] # fueldate
+        # shift = data['shift'] # Prel
+        
+        origin = request.POST.getlist('origin') # origin
+        destination = request.POST.getlist('destination') # destination
+        distances = request.POST.getlist('distance') # distance
 
 
-        print(f"Data: {data}")
+        rider = request.POST.get('Pname','')
+        date = request.POST.get('fueldate','') 
+        shift = request.POST.get('Prel','') 
+        
+
+        total_distance = float(request.POST.get('Total_Distance')) # Total_Distance
+
+        fuel_charges = float(request.POST.get('calfuel','')) 
+        incentive = float(request.POST.get('incentive','')) 
+        total_payable = float(request.POST.get('TAP',''))
+        
+ 
+
+        # print(f"Data: {data}")
 
         if date != '':
             # Define the format of your input string
@@ -55,7 +65,7 @@ def calculate_fuel(request):
                     created_by = request.user.username
                 )
 
-        # create calculator object
+        # # create calculator object
         FuelCalculator.objects.create(
             rider_name = rider,
             fuel_date = date_object,
@@ -73,12 +83,14 @@ def calculate_fuel(request):
 
 
         # redirect to expense
-        if request.user.is_superuser:
-            res = {"redirect_url": "http://127.0.0.1:8000/expense/view/"}
-        else:
-            res = {"redirect_url": "http://127.0.0.1:8000/expense/expense_user/"}
-    
-        return JsonResponse(
-            res,
-            safe=False  
-        )
+        # if request.user.is_superuser:
+        #     res = {"redirect_url": "http://127.0.0.1:8000/expense/view/"}
+        # else:
+        #     res = {"redirect_url": "http://127.0.0.1:8000/expense/expense_user/"}
+        # res = {"message":"Expense Saved"}
+
+        # return JsonResponse(
+        #     res,
+        #     safe=False
+        # )
+        return redirect('expense')

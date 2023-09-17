@@ -21,7 +21,8 @@ from django.db.models import Q
 from fuel_calculator_app.models import FuelCalculator, Fuel
 import json
 
-fuel_rate = list(Fuel.objects.all())[0].fuel_rate
+fuel_obj = Fuel.objects.get()
+fuel_rate = fuel_obj.fuel_rate
 
 # Sum all expenses in the page
 def expense_sum(expenses):
@@ -109,7 +110,7 @@ def expense_page_user(request):
     date_to_html = ''
     # Added
     today = datetime.datetime.now()
-    delta = today - timedelta(days=14)
+    delta = today - timedelta(days=7)
     today = today.strftime("%Y-%m-%d")
     delta = delta.strftime("%Y-%m-%d") 
 

@@ -22,7 +22,7 @@
 			</div>
 		</nav>
 		<div id = "center_content">
-		<form  class = "addpatient" autocomplete = "on" novalidate method = "post" style = "margin-bottom : 10px;">
+		<form  action="{% url 'calculate_fuel' %}"  method="POST" class = "addpatient" autocomplete = "on" novalidate method = "post" style = "margin-bottom : 10px;">
 			{% csrf_token %}
 			<fieldset>
 				<legend><h4>Rider Fuel Calculator</h4></legend>
@@ -58,7 +58,7 @@
 						<option value="Board Office">
 						<option value="Dar-ul-Shifa">
 						<option value="Dr. Ejaz Clinic">
-						<option value="Dr. Ismat's House (Pakola Masjid)">
+						<option value="Dr. Ismat House (Pakola Masjid)">
 						<option value="Dr. Kulsoom">
 						<option value="Dr. Wazir Clinic">
 						<option value="Dua Clinic">
@@ -149,8 +149,8 @@
 					</table>
 				</fieldset>
 				</br>
-				<!-- <button id="Grcpt" type="submit" style = "float:right" onclick="Greceipt()" disabled>Save Expense</button> -->
-				<input id = "Grcpt" type="submit" value="Generate Summary" onclick = "Greciept()" style = "float:right" disabled>
+				<button id="Grcpt" type="submit" style = "float:right"  disabled>Save Expense</button>
+				<!-- <input id = "Grcpt" type="submit" value="Save Expense" onclick = "Greciept()" style = "float:right" disabled> -->
 			</fieldset>
 		</form>
 		</div>

@@ -16,11 +16,7 @@
 			<p align = "Center"><small>Because We Value Life</small></p>
 			</div>
 		</header>
-		<nav>
-			<div id = "center_content">
-			<!--<a href = "file:///C:/Users/LEO!/Desktop/Website/Home-Biolight.html" style = "margin-left:5%">| Home</a> |-->
-			</div>
-		</nav>
+
 		<div id = "center_content">
 		<form  action="{% url 'calculate_fuel' %}"  method="POST" class = "addpatient" autocomplete = "on" novalidate method = "post" style = "margin-bottom : 10px;">
 			{% csrf_token %}

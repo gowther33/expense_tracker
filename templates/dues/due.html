@@ -2,7 +2,6 @@
 {% load static %}
 {% block title_main %}Dues{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -48,13 +47,13 @@
                 <div class="col mt--5 ml-5">
                     <form method="GET" class="form-inline ml-5" action="{% url 'due' %}">
                         <div class="form-group">
-                            <span class="text-white ml-5">
+                            <span class="text-dark ml-5">
                               From: 
                                 <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
                             </span>
                         </div>
                         <div class="form-group">
-                            <span class="text-white ml-5">
+                            <span class="text-dark ml-5">
                               To: 
                                 <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" />
                             </span>
@@ -149,7 +148,7 @@
                           </tr>
                           {% endfor %}
                           <!-- Added -->
-                          <td class="page-total-style">{{page_total}}</td> 
+                          <td id="page-total" class="page-total-style">{{page_total}}</td> 
                           <td class="page-total-style">Page Total</td>
                         </tbody>
                       </table>
@@ -188,10 +187,12 @@
       </div>
     </div>
   </div>
-
   <!-- Searching -->
   <script>
-
+    // For page total
+    ele = document.getElementById("page-total")
+    total = parseFloat(ele.innerHTML).toFixed(2)
+    ele.innerHTML = total
     const searchField = document.querySelector("#searchField");
     const paginationContainer = document.querySelector(".pagination-container");
     const dues_count = document.getElementById("dues_count");
@@ -236,14 +237,14 @@
                 tbody.innerHTML += `
                     <tr>
                     <td>${item.amount}</td>
-                    <td>${item.source}</td>
+                    <td>${item.source__source__source}</td>
                     <td>${
                       item.description.length > 30
                         ? item.description.substring(0, 29) + "..."
                         : item.description
                     }</td>
                     <td>${item.created_at}</td>
-                    <td>${item.created_by}</td>
+                    <td>${item.source__created_by}</td>
                     <td>${item.received_at}</td>
                     <td>
 
@@ -278,7 +279,6 @@
         dues_count.innerHTML = due_count_initial;
       }
     };
-
     function getCookie(name) {
       var cookieValue = null;
       if (document.cookie && document.cookie !== "") {
@@ -293,7 +293,6 @@
       }
       return cookieValue;
     }
-
   </script>
   <script src="{% static 'js/sorting.js' %}"></script>
 {% endblock %}

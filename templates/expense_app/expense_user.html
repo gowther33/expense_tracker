@@ -2,7 +2,6 @@
 {% load static %}
 {% block title_main %}Expenses App{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
     {% include "partials/_sidebar_main_user.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -106,7 +105,7 @@
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->
-                          <td class="page-total-style">{{page_total}}</td> 
+                          <td id="page-total" class="page-total-style">{{page_total}}</td> 
                           <td class="page-total-style">Page Total</td>
                         </tbody>
                       </table>
@@ -119,7 +118,7 @@
           </div>
           <div class="pagination-container">
             <div class="row">
-              <div class="col-md-6"><p></p><span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span></div>
+              <div class="col-md-6"><p></p><span class="text-dark">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span></div>
               <div class="col-md-6">
                 <ul class="pagination align-right float-right mr-auto">              
                   {% if page_expenses.has_previous %}
@@ -145,6 +144,11 @@
       </div>
     </div>
   </div>
+  <script >
+    ele = document.getElementById("page-total")
+    total = parseFloat(ele.innerHTML).toFixed(2)
+    ele.innerHTML = total
+  </script>
   <script src="{% static 'js/expense_search.js' %}"></script>
 
 {% endblock %}

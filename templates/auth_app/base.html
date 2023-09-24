@@ -1,18 +1,33 @@
 {% extends "base.html" %}
 {% load static %}
+{% block login_style %}
+<link rel="stylesheet" href="{% static 'css/login_style.css' %}">
+{% endblock %}
 {% block body_main %}
-    <script>
-        document.body.classList.add('bg-default')
-    </script>
-    {% include "partials/_navbar_index.html" %}
-    <div class="main-content">
-        <div class="header bg-gradient-primary py-7 py-lg-8 pt-lg-9">
-            <div class="separator separator-bottom separator-skew zindex-100">
-                <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                    <polygon class="fill-default" points="2560 0 2560 100 0 100"></polygon>
-                </svg>
+
+
+        <header>
+            <div id = "center_content">
+                <img src = "{% static 'img/logo.jpg' %}" height = "9%" align = "Left" width = "9%" style = "border-radius:60%; position:200px,800px; float : Left;"/>
+                <h1 align = "Center" style = "margin: 0;">Biolight Laboratories & Diagnostic Centre</h1>
+                <p align = "Center">
+                    <small>Because We Value Life</small>
+                </p>
             </div>
-        </div>
-        {% block body_main_content %}{% endblock %}
-    </div>
+        </header>
+
+        {% block body_main_content %}
+        {% endblock %}
+
+        <footer><!--id = "StickyFooter"-->
+            <p align = "Center"><small>© Copyright 2019, All rights to this website are reserved</br>
+            Red Crescent Medical Centre & Consultants Clinic, Jigar Murad Abadi Road, Near Islamia College, Karachi</br>
+            Contact: 021-34894616, lab.biolight@gmail.com</small>
+            </p>
+        </footer>
+
+    <!-- </div> -->
+
+
+
 {% endblock %}

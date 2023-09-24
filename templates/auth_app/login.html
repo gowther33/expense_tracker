@@ -1,36 +1,136 @@
-{% extends "auth_app/base.html" %}
 {% load static %}
-{% block title_main %}Login{% endblock %}
-{% block body_main_content %}
-    <div class="container mt--8 pb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-5 col-md-7">
-                <div class="card bg-secondary border-0 mb-0">
-                    <div class="card-body px-lg-5 py-lg-5">
-                        {% include "partials/_messages.html" %}
-                        <div class="text-center text-muted mb-4"><small>Login with credentials</small></div>
-                            <form action="{% url 'login' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="form-group mb-3">
-                                    <div class="input-group input-group-merge input-group-alternative"><div class="input-group-prepend"><span class="input-group-text"><i class="ni ni-email-83"></i></span></div><input class="form-control" name="username" value="{{username}}" placeholder="username" type="username" autofocus></div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="input-group input-group-merge input-group-alternative">
-                                    <div class="input-group-prepend"><span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span></div><input class="form-control" name="password" placeholder="Password" type="password"></div>
-                                </div>
-                                <div class="text-center"><button type="submit" class="btn btn-primary my-4">Sign in</button></div>
-                            </form>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Login</title>
+
+        <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/gif" sizes="16x16">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+        <link href="{% static 'css/nucleo.css' %}" rel="stylesheet">
+        <link href="{% static 'css/argon.min.css?v=1.2.0' %}" rel="stylesheet">
+
+        <style>
+            {% comment %} *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            } {% endcomment %}
+            header{
+                padding : 5px;
+                max-width: 100%;
+                background-color : #cc0000;
+                margin-bottom : 0; margin-top: 0;
+            }
+            #center_content{
+                margin-left : 200px;
+                margin-right : 200px;
+            }
+
+            body{
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                background-color : #ffffe6;
+            }
+            footer{
+                margin-top: auto;
+                padding : 2.5px;
+                color : white;
+                /* max-width : 100%; */
+                background-color : #cc0000;
+                position: relative;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+            }
+
+            #login-container{
+                position: absolute;
+                top: 60%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                padding: 10px;
+            } 
+            .header-text{
+                color:white;
+            }
+
+        </style>
+
+    </head>
+
+    <body >
+
+        <header>
+            <div id = "center_content">
+                <img src = "{% static 'img/logo.jpg' %}" height = "9%" align = "Left" width = "9%" style = "border-radius:60%; position:200px,800px; float : Left;"/>
+                <h1 class="header-text" align = "Center" style = "margin: 0;">Biolight Laboratories & Diagnostic Centre</h1>
+                <p class="header-text" align = "Center">
+                    <small>Because We Value Life</small>
+                </p>
+            </div>
+        </header>
+
+
+        <div id="login-container" class="container mt--8 pb-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-5 col-md-7">
+                    <div class="card bg-secondary border-0 mb-0">
+                        <div class="card-body px-lg-5 py-lg-5">
+                            {% include "partials/_messages.html" %}
+                            <div class="text-center text-muted mb-4"><small>Login with credentials</small></div>
+                                <form action="{% url 'login' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group mb-3">
+                                        <div class="input-group input-group-merge input-group-alternative">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">
+                                                    <i class="ni ni-email-83"></i>
+                                                </span>
+                                            </div>
+                                            <input class="form-control" name="username" value="{{username}}" placeholder="username" type="username" autofocus></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group input-group-merge input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="ni ni-lock-circle-open"></i>
+                                            </span>
+                                        </div>
+                                        <input class="form-control" name="password" placeholder="Password" type="password">
+                                    </div>
+                                    </div>
+                                    <div class="text-center"><button type="submit" class="btn btn-primary my-4">Log in</button></div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-3">
-                        <!-- <div class="col-6">
-                            <a href="{% url 'password_reset' %}" class="text-light">
-                                <small>Forgot password?</small>
-                            </a>
-                        </div> -->
+                        {% comment %} <div class="row mt-3">
+                            <div class="col-6">
+                                <a href="{% url 'password_reset' %}" class="text-light">
+                                    <small>Forgot password?</small>
+                                </a>
+                            </div>
+                            <div class="col-6 text-right">
+                                <a href="{% url 'register' %}" class="text-light">
+                                    <small>Create new account</small>
+                                </a>
+                            </div>
+                        </div> {% endcomment %}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-{% endblock %}
+
+        <footer><!--id = "StickyFooter"-->
+            <p align = "Center"><small>© Copyright 2019, All rights to this website are reserved</br>
+            Red Crescent Medical Centre & Consultants Clinic, Jigar Murad Abadi Road, Near Islamia College, Karachi</br>
+            Contact: 021-34894616, lab.biolight@gmail.com</small>
+            </p>
+        </footer>
+
+    
+    </body>
+    <form action="{% url 'logout' %}" id = "formnew" method="POST">{% csrf_token %}</form>
+</html>

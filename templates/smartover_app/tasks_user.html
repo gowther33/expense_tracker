@@ -47,12 +47,12 @@
         <div class="col mt--5 ml-5">
           <form method="GET" class="form-inline ml-5" action="{% url 'tasks_page_user' %}" style="visibility: hidden;">
             <div class="form-group">
-              <span class="text-white ml-5">From: 
+              <span class="text-dark ml-5">From: 
                 <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
               </span>
             </div>
             <div class="form-group">
-              <span class="text-white ml-5">To: 
+              <span class="text-dark ml-5">To: 
                 <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" />
               </span>
             </div>
@@ -150,7 +150,7 @@
           </div>
           <div class="pagination-container">
             <div class="row">
-              <div class="col-md-6"><p></p><span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span></div>
+              <div class="col-md-6"><p></p><span class="text-dark">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span></div>
               <div class="col-md-6">
                 <ul class="pagination align-right float-right mr-auto">              
                   {% if page_expenses.has_previous %}

@@ -20,6 +20,7 @@ def search_due(request):
         due = Due.objects.all()
 
         dues = due.filter(
+            Q(received_at__istartswith = query) |
             Q(amount__istartswith = query) | 
             Q(date__istartswith = query) | 
             Q(description__icontains = query) |
@@ -27,23 +28,19 @@ def search_due(request):
             Q(source__created_by__icontains = query)
         )
 
-        # filtered_results = dues.values('id','amount','description','source','created_at','received_at')
-
-        result = []    
-        
-        print(f"Type: {type(dues)}")
-        for x in dues:
-            dic = {'id':x.id,
-                   'amount':x.amount, 
-                   'description':x.description, 
-                   'source':x.source.source.source, 
-                   'created_at':x.created_at, 
-                   'created_by':x.source.created_by,
-                   'received_at':x.received_at}
-            result.append(dic)
+        filtered_results = dues.values(
+            'id',
+            'amount',
+            'description',
+            'source__source__source',
+            'created_at',
+            'received_at',
+            'source__created_by'
+        )
+        result = list(filtered_results)  
 
 
         return JsonResponse(
-            result
-            ,safe=False
+            result,
+            safe=False
         )

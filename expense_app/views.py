@@ -91,7 +91,6 @@ def expense_page(request):
     page_expenses = Paginator.get_page(paginator,page_number)
     page_total = expense_sum(page_expenses) # Sum total
     currency = 'PKR - Pakitani Rupee'
-
     return render(request,'expense_app/expense.html',{
         'currency':currency,
         'page_expenses':page_expenses,

@@ -80,8 +80,6 @@ def calculate_fuel(request):
             expense_obj = exp
         )
 
-
-
         # redirect to expense
         # if request.user.is_superuser:
         #     res = {"redirect_url": "http://127.0.0.1:8000/expense/view/"}
@@ -93,4 +91,7 @@ def calculate_fuel(request):
         #     res,
         #     safe=False
         # )
-        return redirect('expense')
+        if request.user.is_superuser:
+            return redirect('expense')
+        else:
+            return redirect('expense_user')

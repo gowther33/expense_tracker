@@ -1,7 +1,10 @@
 {% extends "base.html" %}
-{% block title_main %}Expense Memo{% endblock %}
-{% block body_main %}
 {% load static %}
+{% block title_main %}Expense Memo{% endblock %}
+{% block memo_style %}
+<link rel="stylesheet" href="{% static 'css/expense_memo_style.css' %}">
+{% endblock %}
+{% block body_main %}
     <div class="main-content bg-primary" id="panel">
 
     <div class="header bg-primary pb-6">

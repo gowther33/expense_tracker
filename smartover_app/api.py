@@ -16,7 +16,7 @@ def search_task(request):
                 'error':'Not Found'
             })
 
-        task = Task.objects.all()
+        task = Task.objects.filter(status='Open')
         
         tasks = task.filter(
             Q(created_by__username = query) |

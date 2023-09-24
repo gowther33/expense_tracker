@@ -2,7 +2,7 @@
 {% load static %}
 {% block title_main %}Expenses{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
+
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -51,10 +51,10 @@
         <div class="col mt--5 ml-5">
           <form method="GET" class="form-inline ml-5" action="{% url 'expense' %}">
             <div class="form-group">
-              <span class="text-white ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span>
+              <span class="text-dark ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span>
             </div>
             <div class="form-group">
-              <span class="text-white ml-5">To: <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" /></span>
+              <span class="text-dark ml-5">To: <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" /></span>
             </div>
             <div class="ml-5">
               <span class="ml-5">
@@ -87,17 +87,11 @@
                           <tr>
                             <th style="font-size: small;">
                               <span class="row">Amount ({{currency}}) 
-                                <span class="col">
-                                  <!-- <div class="mb-1 arrow-up" id="amount_up"></div>
-                                  <div class="arrow-down" id="amount_down"></div> -->
-                                </span> 
                               </span>
                             </th>
                             <th style="font-size: small;">Category</th>
                             <th style="font-size: small;">Description </th>
                             <th style="font-size: small;">Date/Time </th>
-                            <!-- <th style="font-size: small;">Action</th>
-                            <th style="font-size: small;">Print</th>     -->
                             <th style="font-size: small;">Created By</th>    
                             <th style="font-size: small;">Actions</th>                            
                           </tr>
@@ -133,7 +127,7 @@
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->
-                          <td class="page-total-style">{{page_total}}</td> 
+                          <td id="page-total" class="page-total-style">{{page_total}}</td> 
                           <td class="page-total-style">Page Total</td>
                         </tbody>
                       </table>
@@ -149,7 +143,7 @@
             <div class="row">
               <div class="col-md-6">
                 <p></p>
-                <span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span>
+                <span class="text-dark">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span>
               </div>
               <div class="col-md-6">
                 <ul class="pagination align-right float-right mr-auto">              
@@ -176,6 +170,11 @@
       </div>
     </div>
   </div>
+  <script >
+    ele = document.getElementById("page-total")
+    total = parseFloat(ele.innerHTML).toFixed(2)
+    ele.innerHTML = total
+  </script>
   <script src="{% static 'js/expense_search.js' %}"></script>
   <script src="{% static 'js/sorting.js' %}"></script>
 {% endblock %}

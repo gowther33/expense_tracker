@@ -2,7 +2,6 @@
 {% load static %}
 {% block title_main %}Dues App{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
     {% include "partials/_sidebar_main_user.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -42,9 +41,9 @@
                 <!-- <div class="col-md-2 text-right ml-3 mr--3">
                     <a href="{% url 'import_income' %}" class="btn btn btn-neutral">Import</a> 
                 </div> -->
-                <div class="col-md-2 text-right ml--4">
+                {% comment %} <div class="col-md-2 text-right ml--4">
                     <a href="{% url 'add_due' %}" class="btn btn btn-neutral">Create New</a>
-                </div>
+                </div> {% endcomment %}
             </div>
             <hr class="mt--2"/>
             <div class="row align-items-center py-4">
@@ -128,7 +127,7 @@
                           </tr>
                           {% endfor %}
                           <!-- Added -->
-                          <td class="page-total-style" >{{page_total}}</td> 
+                          <td id="page-total" class="page-total-style" >{{page_total}}</td> 
                           <td class="page-total-style" >Page Total</td>
                         </tbody>
                       </table>
@@ -169,7 +168,10 @@
   </div>
   <!-- Searching -->
   <script>
-
+    // For page total
+    ele = document.getElementById("page-total")
+    total = parseFloat(ele.innerHTML).toFixed(2)
+    ele.innerHTML = total
     const searchField = document.querySelector("#searchField");
     const paginationContainer = document.querySelector(".pagination-container");
     const dues_count = document.getElementById("dues_count");
@@ -177,14 +179,12 @@
     const tbody = document.querySelector("#table-body-data");
     let due_list = tbody.innerHTML;
     const no_results = document.getElementById("no-results");
-
     searchField.addEventListener("keyup", (e) => {
       const delay = setTimeout(() => {
         searchFunction(e);
       }, 500);
       return () => clearTimeout(delay);
     });
-
     const searchFunction = (e) => {
       const searchValue = e.target.value;
       no_results.style.display = "none";
@@ -256,7 +256,6 @@
         dues_count.innerHTML = due_count_initial;
       }
     };
-
     function getCookie(name) {
       var cookieValue = null;
       if (document.cookie && document.cookie !== "") {
@@ -271,7 +270,5 @@
       }
       return cookieValue;
     }
-
   </script>
-
 {% endblock %}

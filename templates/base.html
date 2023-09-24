@@ -5,66 +5,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title_main %}{% endblock %}</title>
-        <style>
-            .signature-container {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                margin-top: 50px;
-            }
-            
-            .signature-line label {
-                width: 100px;
-                font-weight: normal;
-            }
-            
-            .signature-line .line {
-                flex:1;
-                height: 1px;
-                margin-top: 40px;
-                border-bottom: 1px solid #000;
-            }
-
-            a:is(:link, :active, :visited).active-tab{
-                color: white;
-                background-color: lightsteelblue;
-            }
-
-            #memo-table-values1 > td, #memo-table-values2 > td {
-                font-weight: 500;
-                font-size: medium;
-            }
-
-            #memo-table-head1 > th, #memo-table-head2 > th {
-                font-size: medium;
-            }
+        {% block memo_style %}{% endblock %}
 
 
-            @media print {
-            body {
-                padding: 10px;
-                }
-            #no-print {
-                  visibility: hidden;
-                }
-            }
-
-            #lab-logo{
-                display:block;
-                margin-left: auto;
-                margin-right: auto;
-                margin-bottom: 30px;
-                width: 100%;
-            }
-
-            .page-total-style{
-                font-size: large;
-                color: greenyellow;
-            }
-
-
-        </style>
         <!-- Added -->
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -73,10 +16,20 @@
         <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/gif" sizes="16x16">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
         <link href="{% static 'css/nucleo.css' %}" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha512-c93ifPoTvMdEJH/rKIcBx//AL1znq9+4/RmMGafI/vnTFe/dKwnn1uoeszE2zJBQTS1Ck5CqSBE+34ng2PthJg==" crossorigin="anonymous" />
-		<link href="{% static 'css/argon.min.css?v=1.2.0' %}" rel="stylesheet">
+        {% comment %} <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha512-c93ifPoTvMdEJH/rKIcBx//AL1znq9+4/RmMGafI/vnTFe/dKwnn1uoeszE2zJBQTS1Ck5CqSBE+34ng2PthJg==" crossorigin="anonymous" /> {% endcomment %}
+		<link href="{% static 'css/argon.min.css' %}" rel="stylesheet">
         <!-- Cash Memo Styling -->
         <link href="{% static 'css/memo.css' %}" rel="stylesheet">
+        <style>
+            a:is(:link, :active, :visited).active-tab{
+                color: white;
+                background-color: lightsteelblue;
+            }
+            .page-total-style{
+                font-size: large;
+                color: greenyellow;
+            }
+        </style>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     </head>
@@ -95,8 +48,6 @@
     </style>
     <body class="bg-primary">
         {% block body_main %}{% endblock %}
-
-
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>

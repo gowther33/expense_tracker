@@ -1,0 +1,50 @@
+
+/* Expense memo style */
+.signature-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.signature-line label {
+    width: 100px;
+    font-weight: normal;
+}
+
+.signature-line .line {
+    flex:1;
+    height: 1px;
+    margin-top: 40px;
+    border-bottom: 1px solid #000;
+}
+
+
+#memo-table-values1 > td, #memo-table-values2 > td {
+    font-weight: 500;
+    font-size: medium;
+}
+
+#memo-table-head1 > th, #memo-table-head2 > th {
+    font-size: medium;
+}
+
+
+@media print {
+body {
+    padding: 10px;
+    }
+#no-print {
+        visibility: hidden;
+    }
+}
+
+#lab-logo{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    width: 100%;
+}
+/* Expense memo style */

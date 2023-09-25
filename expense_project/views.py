@@ -73,7 +73,7 @@ def _dashboard(request):
     date_to_html = ''
     # Added
     today = datetime.datetime.now()
-    delta = today - timedelta(days=14)
+    delta = today - timedelta(days=7)
     today = today.strftime("%Y-%m-%d")
     delta = delta.strftime("%Y-%m-%d") 
 

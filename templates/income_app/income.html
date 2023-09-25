@@ -82,7 +82,7 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if incomes %}
-                    <h5 class="h3 text-white mb-0 text-center">My Incomes - <span id="income_count">{{ incomes.count }}</span></h5>
+                    <h5 class="h3 text-white mb-0 text-center">Incomes - <span id="income_count">{{ incomes.count }}</span></h5>
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead>
@@ -109,7 +109,25 @@
                             <td>{{income.created_at}}</td>
                             <td>{{income.created_by}}</td>
                             <td>
-                              <a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a>
+                              <div class="dropdown ms-auto">
+                                <i class="fas fa-ellipsis-vertical" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="{% url 'edit_income' income.id %}" >
+                                      <span class="dropdown-item">
+                                        <i class="fas fa-pen mx-2"></i> Edit
+                                      </span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a href="{% url 'delete_income' income.id %}">                                      
+                                      <span class="dropdown-item">
+                                        <i class="fas fa-trash mx-2"></i> Delete
+                                      </span>
+                                    </a>
+                                  </li>
+                                </ul>
+                              </div>
                             </td>
                           </tr>{% endfor %}
                           <!-- Added -->

@@ -28,5 +28,5 @@ class Expense(models.Model):
 		return str(self.category) + str(self.date )+ str(self.amount)
 	
 	class Meta:
-		ordering:['-date']
+		ordering:['-created_at']
 

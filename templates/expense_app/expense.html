@@ -80,7 +80,7 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if expenses %}
-                    <h5 class="h3 text-white mb-0 text-center">My Expenses - <span id="expense_count">{{ expenses.count }}</span></h5>
+                    <h5 class="h3 text-white mb-0 text-center">Expenses - <span id="expense_count">{{ expenses.count }}</span></h5>
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead>
@@ -112,6 +112,13 @@
                                     <a href="{% url 'edit_expense' expense.id %}" >
                                       <span class="dropdown-item">
                                         <i class="fas fa-pen mx-2"></i> Edit
+                                      </span>
+                                    </a>
+                                  </li>
+                                  <li>
+                                    <a href="{% url 'delete_expense' expense.id %}">                                      
+                                      <span class="dropdown-item">
+                                          <i class="fas fa-trash mx-2"></i> Delete
                                       </span>
                                     </a>
                                   </li>

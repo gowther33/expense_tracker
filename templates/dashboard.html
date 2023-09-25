@@ -33,7 +33,7 @@
                   <div class="row">
                     <div class="col">
                       <h5 class="card-title text-uppercase text-muted mb-0">Spent Today</h5>
-                      <span class="h2 font-weight-bold mb-0">{{ spent_today }}</span>
+                      <span class="h2 font-weight-bold mb-0">{{spent_today|floatformat:2}}</span>
                     </div>
                     <div class="col-auto">
                       <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
@@ -54,7 +54,7 @@
                   <div class="row">
                     <div class="col">
                       <h5 class="card-title text-uppercase text-muted mb-0">This Week</h5>
-                      <span class="h2 font-weight-bold mb-0">{{spent_week}}</span>
+                      <span class="h2 font-weight-bold mb-0">{{spent_week|floatformat:2}}</span>
                     </div>
                     <div class="col-auto">
                       <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
@@ -75,7 +75,7 @@
                   <div class="row">
                     <div class="col">
                       <h5 class="card-title text-uppercase text-muted mb-0">This Month</h5>
-                      <span class="h2 font-weight-bold mb-0">{{spent_month}}</span>
+                      <span class="h2 font-weight-bold mb-0">{{spent_month|floatformat:2}}</span>
                     </div>
                     <div class="col-auto">
                       <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
@@ -96,7 +96,7 @@
                   <div class="row">
                     <div class="col">
                       <h5 class="card-title text-uppercase text-muted mb-0">This Year</h5>
-                      <span class="h2 font-weight-bold mb-0">{{spent_year}}</span>
+                      <span class="h2 font-weight-bold mb-0">{{spent_year|floatformat:2}}</span>
                     </div>
                     <div class="col-auto">
                       <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">

@@ -292,17 +292,18 @@ def edit_due(request,id):
             if date == '':
                 date = localtime()
 
-            # Adjust Amounts
-            update_amount = curr_amount - amount
-            # Add update amount in source amount
-            due_source.amount += update_amount
-            due_source.save()
-            
-            # Update due
-            due.amount = amount
-            due.date = date
-            due.description = description
-            due.save()
+            if curr_amount != amount:
+                # Adjust Amounts
+                update_amount = curr_amount - amount
+                # Add update amount in source amount
+                due_source.amount += update_amount
+                due_source.save()
+                
+                # Update due
+                due.amount = amount
+                due.date = date
+                due.description = description
+                due.save()
 
             messages.success(request,'Due Updated Successfully')
             return redirect('due')

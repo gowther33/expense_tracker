@@ -40,7 +40,7 @@ def expense_page(request):
     date_to_html = ''
 
   
-    expenses = Expense.objects.all().order_by('-date')
+    expenses = Expense.objects.all().order_by('-created_at')
 
     try:
         

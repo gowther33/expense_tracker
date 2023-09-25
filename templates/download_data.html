@@ -44,14 +44,14 @@
       </div>
       <div class="row">
         <div class="col mr-5 ml-5 mt-4 mb-3">
-          <h2 class="text-white">Expense</h2>
+          <h2 class="text-dark">Expense</h2>
           <a id="download_as_csv_expense" href="{% url 'download_as_csv' 'year' %}" class="btn btn-neutral" class="btn btn-neutral">Download as Csv</a>
           <a id="download_as_excel_expense" href="{% url 'download_as_excel' 'year' %}" class="btn btn-neutral">Download as Excel</a>
         </div>
       </div>
       <div class="row">
         <div class="col mr-5 ml-5 mt-4 mb-3">
-          <h2 class="text-white">Income</h2>
+          <h2 class="text-dark">Income</h2>
           <a id="download_as_csv_income" href="{% url 'income_download_as_csv' 'year' %}" class="btn btn-neutral" class="btn btn-neutral">Download as Csv</a>
           <a id="download_as_excel_income" class="btn btn-neutral" href="{% url 'income_download_as_excel' 'year' %}">Download as Excel</a>
         </div>
@@ -59,7 +59,7 @@
       <!-- Dues -->
       <div class="row">
         <div class="col mr-5 ml-5 mt-4 mb-3">
-          <h2 class="text-white">Due</h2>
+          <h2 class="text-dark">Due</h2>
           <a id="download_as_csv_income" href="{% url 'due_download_as_csv' 'year' %}" class="btn btn-neutral" class="btn btn-neutral">Download as Csv</a>
           <a id="download_as_excel_income" class="btn btn-neutral" href="{% url 'due_download_as_excel' 'year' %}">Download as Excel</a>
         </div>
@@ -67,7 +67,7 @@
     
       <div class="row">
         <div class="col mr-5 ml-5 mt-4 mb-3">
-          <h2 class="text-white">Complete SpreadSheet (All Data)</h2>
+          <h2 class="text-dark">Complete SpreadSheet (All Data)</h2>
           <a class="btn btn-neutral" href="{% url 'complete_spreadsheet_csv' %}">Download as Csv</a>
           <!-- <a class="btn btn-neutral" target="_blank" href="{% url 'complete_spreadsheet_pdf' %}">Download as Pdf</a> -->
           <a class="btn btn-neutral" href="{% url 'complete_spreadsheet_excel' %}">Download as Excel</a>

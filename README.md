@@ -27,7 +27,7 @@
 
 ### Steps for running project
 ```bash
-git clone https://github.com/rishank-shah/Income-Expense-Tracker.git
+git clone https://github.com/gowther33/expense_tracker.git
 cd Income-Expense-Tracker
 cp .env.example .env
 ```
@@ -40,25 +40,6 @@ pip install -r requirements.txt
 source .env
 python manage.py migrate
 python manage.py runserver
-```
-
-##### NOTE: If you dont want Sentry Error Monitoring remove lines [177](expense_project/settings.py#L177) to [183](expense_project/settings.py#L183) from [settings.py](expense_project/settings.py#L177)
-```py
-if DEBUG == False and os.environ.get('SENTRY_DSN','') != '':
-    sentry_sdk.init(
-        dsn=os.environ.get('SENTRY_DSN'),
-        integrations=[DjangoIntegration()],
-        traces_sample_rate=1.0,
-        send_default_pii=True
-    )
-```
-
-### Generate dummy data
-```bash
-cd Income-Expense-Tracker
-source venv/bin/activate
-source .env
-python generate_data.py
 ```
 
 ##### If all commands run successfully website will be running on PORT 8000 on localhost [http://localhost:8000](http://localhost:8000)

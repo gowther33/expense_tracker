@@ -317,8 +317,6 @@ def delete_due(request,id):
         if Due.objects.filter(id=id).exists():
             due = Due.objects.get(id=id)
             due.delete()
-            due.save()
-
             messages.success(request,'Due Deleted Successfully')
             return redirect('due')
             
@@ -406,7 +404,6 @@ def download_as_excel(request,filter_by):
     fontStyle = xlwt.XFStyle()
     
     dues = queryset_filter(filter_by).order_by('date')
-    print("Fetched")
     rows = dues.values_list('date','source__source__source','description','amount','source__created_by','received_at')
     
     for row in rows:

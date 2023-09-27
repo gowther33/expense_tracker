@@ -613,7 +613,6 @@ def upload_csv(request):
         
         except Exception as e:
             income_send_error_mail(request,csv_file.name,'CSV')
-            print(repr(e))
 
             messages.error(request,'Please Check if the format of csv file is correct.')
             return redirect('import_income')
@@ -720,7 +719,6 @@ def upload_excel(request):
         
         except Exception as e:
             income_send_error_mail(request,excel_file.name,'Excel')
-            print(repr(e))
 
             messages.error(request,'Please Check if the format of excel file is correct.')
             return redirect('import_income')

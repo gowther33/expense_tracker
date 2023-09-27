@@ -2,7 +2,6 @@
 {% load static %}
 {% block title_main %}Tasks{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
     {% include "partials/_sidebar_main_user.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -45,7 +44,7 @@
       <hr class="mt--2"/>
       <div class="row align-items-center py-4">
         <div class="col mt--5 ml-5">
-          <form method="GET" class="form-inline ml-5" action="{% url 'tasks_page_user' %}" style="visibility: hidden;">
+          <form method="GET" class="form-inline ml-5" action="{% url 'tasks_page_user' %}">
             <div class="form-group">
               <span class="text-dark ml-5">From: 
                 <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" />
@@ -177,5 +176,5 @@
     </div>
   </div>
   <script src="{% static 'js/task_search.js' %}"></script>
-
+  <script src="{% static 'js/sorting.js' %}"></script>
 {% endblock %}

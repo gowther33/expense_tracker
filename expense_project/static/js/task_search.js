@@ -129,13 +129,12 @@ const searchFunction = (e) => {
   
               tbody.innerHTML += `
               <tr>
+              <td>${item.created_by__username}</td>
               <td>${
                 item.description.length > 30
                   ? item.description.substring(0, 29) + "..."
                   : item.description
               }</td>
-              <td>${
-                item.created_by__username}</td>
                 <td>${priority}</td>
                 <td>${item.date}</td>
                 <td>${item.closing_date}</td>

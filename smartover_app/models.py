@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 3 = HIGH
 4 = CRITICAL
 
-
 status: Open | Closed
 """
 
@@ -26,8 +25,3 @@ class Task(models.Model):
 	remarks = models.TextField()
 	priority = models.PositiveIntegerField(default=1)
 	status = models.CharField(max_length=100, default="Open")
-
-
-# Rest of the work is pending
-# working for admin
-# for user pending

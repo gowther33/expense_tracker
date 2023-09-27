@@ -3,19 +3,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Task
 from django.contrib import messages
 from django.utils.timezone import localtime
-from user_profile.models import UserProfile
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponse
-from django.db.models import Sum
-import xlwt
-import csv
-import pandas as pd
-import datetime
-
-from pyexcel_xls import get_data as xls_get
-from pyexcel_xlsx import get_data as xlsx_get
-from datetime import datetime as datetime_custom, timedelta
+from datetime import datetime as datetime_custom
 from django.db.models import Q
 
 
@@ -314,4 +303,3 @@ def delete_task(request,id):
     else:
         messages.error(request,'Only Admin can delete task.')
         return redirect('tasks_page_user')
-

@@ -2,7 +2,7 @@
 {% load static %}
 {% block title_main %}Closed Tasks{% endblock %}
 {% block body_main %}
-<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
+
     {% include "partials/_sidebar_main_user.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
@@ -45,7 +45,7 @@
       <hr class="mt--2"/>
       <div class="row align-items-center py-4">
         <div class="col mt--5 ml-5">
-          <!-- <form method="GET" class="form-inline ml-5" action="{% url 'tasks_page_user' %}">
+          <form method="GET" class="form-inline ml-5" action="{% url 'closed_task_page' %}">
             <div class="form-group">
               <span class="text-dark ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span>
             </div>
@@ -56,7 +56,7 @@
               <span class="ml-5">
                 <button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button>
               </span></div><button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button>
-            </form> -->
+            </form>
           </div>
         </div>
         <hr class="mt--2"/>
@@ -91,7 +91,18 @@
                           <tr>
                             <td>{{task.created_by.username}}</td>
                             <td>{{task.description | truncatechars:30 }}</td>
-                            <td>{{task.priority}}</td>
+                            {% if task.priority == 1 %}
+                            <td>Low</td>
+                            {% endif %}
+                            {% if task.priority == 2 %}
+                            <td>Medium</td>
+                            {% endif %}
+                            {% if task.priority == 3 %}
+                            <td>High</td>
+                            {% endif %}
+                            {% if task.priority == 4 %}
+                            <td>Critical</td>
+                            {% endif %}
                             <td>{{task.date}}</td>
                             <td>{{task.closing_date}}</td>
                             <td>{{task.closed_by.username}}</td>
@@ -316,9 +327,7 @@
                 });
               }
             });
-
         }
-
       } else {
         paginationContainer.style.display = "block";
         tbody.innerHTML = task_list;
@@ -341,5 +350,5 @@
       return cookieValue;
     }
   </script>
-
+  <script src="{% static 'js/sorting.js' %}"></script>
 {% endblock %}
